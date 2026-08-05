@@ -1,5 +1,5 @@
 <div align="center">
-   <h1>Carbon</h1>
+   <h1><img src="logo.svg" height="350"></h1>
 
    <p><strong>Your First Terminal.</strong></p>
 </div>
