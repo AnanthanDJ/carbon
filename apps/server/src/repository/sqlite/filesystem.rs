@@ -4,6 +4,7 @@ use sqlx::SqlitePool;
 
 use crate::{models::FilesystemNode, repository::FilesystemRepository};
 
+#[derive(Clone)]
 pub struct SqliteFilesystemRepository {
     pool: SqlitePool,
 }

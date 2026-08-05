@@ -13,4 +13,10 @@ pub enum FilesystemError {
 
     #[error("Invalid path")]
     InvalidPath,
+
+    #[error("Not a file")]
+    NotFile,
+
+    #[error("Directory not empty")]
+    DirectoryNotEmpty,
 }

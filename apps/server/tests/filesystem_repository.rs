@@ -81,7 +81,7 @@ async fn resolve_existing_path() -> Result<()> {
 
     let node = fs.resolve_node(&session, "home/projects").await?;
 
-    assert_eq!(node.expect("node should exist").name, "projects",);
+    assert_eq!(node.name, "projects",);
 
     Ok(())
 }
@@ -155,7 +155,7 @@ async fn resolve_relative_path() -> Result<()> {
 
     let node = fs.resolve_node(&session, "projects/rust").await?;
 
-    assert_eq!(node.expect("node should exist").name, "rust",);
+    assert_eq!(node.name, "rust",);
 
     Ok(())
 }
@@ -218,7 +218,7 @@ async fn resolve_parent_directory() -> Result<()> {
 
     let node = fs.resolve_node(&session, "..").await?;
 
-    assert_eq!(node.expect("node should exist").name, "home",);
+    assert_eq!(node.name, "home",);
 
     Ok(())
 }
@@ -257,9 +257,9 @@ async fn resolve_missing_path() -> Result<()> {
         cwd: resolve(&ResolvedPath::root(), "home"),
     };
 
-    let node = fs.resolve_node(&session, "does_not_exist").await?;
+    let err = fs.resolve_node(&session, "does_not_exist").await;
 
-    assert!(node.is_none());
+    assert!(matches!(err, Err(_)));
 
     Ok(())
 }
