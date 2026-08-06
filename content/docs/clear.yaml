@@ -1,0 +1,45 @@
+name: 
+      summary: "Clears the terminal screen."
+
+      purpose: >
+        Removes the currently displayed terminal output from the visible
+        terminal area.
+
+      syntax:
+        - "clear"
+
+      parameters: []
+
+      examples:
+        - command: "clear"
+          output: |
+            [Terminal screen cleared]
+
+        - command: |
+            echo Hello Carbon
+            clear
+          output: |
+            [Terminal screen cleared]
+
+      result: >
+        Carbon returns a clear instruction to the frontend, which clears the
+        visible terminal screen.
+
+      notes:
+        - "The command takes no arguments."
+        - "Clearing the terminal does not delete files or modify the filesystem."
+        - "The clear operation is implemented through frontend behavior."
+
+      common_mistakes:
+        - mistake: "Assuming clear deletes terminal history."
+          explanation: >
+            clear only clears the visible terminal output. It does not
+            remove files or modify the working directory.
+
+      limitations: []
+
+      status: "implemented"
+
+      related_commands:
+        - "echo"
+        - "pwd"

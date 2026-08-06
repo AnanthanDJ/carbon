@@ -1,0 +1,63 @@
+name: 
+      summary: "Creates a new directory."
+
+      purpose: >
+        Creates a single directory at the specified path.
+
+      syntax:
+        - "mkdir <directory>"
+
+      parameters:
+        - name: "directory"
+          required: true
+          description: >
+            The path of the directory to create. Supports relative and
+            absolute paths.
+
+      examples:
+        - command: "mkdir projects"
+          output: |
+            Directory created.
+
+        - command: "mkdir /home/projects/rust"
+          output: |
+            Directory created.
+
+      result: >
+        A new directory is created at the specified location.
+
+      notes:
+        - "One directory can be created per command."
+        - "Relative paths are supported."
+        - "Absolute paths are supported."
+        - "The parent directory must already exist."
+
+      common_mistakes:
+        - mistake: "Creating a directory whose parent does not exist."
+          explanation: >
+            mkdir does not currently create missing parent directories.
+
+        - mistake: "Creating a directory that already exists."
+          explanation: >
+            The command returns an error when the target directory already exists.
+
+      errors:
+        - name: "Parent does not exist"
+          condition: "The parent directory of the requested path does not exist."
+
+        - name: "Directory already exists"
+          condition: "A directory already exists at the requested path."
+
+        - name: "Parent is not a directory"
+          condition: "A component of the requested path refers to a file."
+
+      limitations:
+        - "-p is not supported."
+        - "Multiple directories cannot be created in one command."
+
+      status: "implemented"
+
+      related_commands:
+        - "ls"
+        - "cd"
+        - "rmdir"

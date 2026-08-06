@@ -1,0 +1,44 @@
+name: 
+      summary: "Displays the current working directory."
+
+      purpose: >
+        Prints the canonical path of the directory currently used as the
+        terminal's working directory.
+
+      syntax:
+        - "pwd"
+
+      parameters: []
+
+      examples:
+        - command: "pwd"
+          output: |
+            /home/projects
+
+        - command: |
+            cd /home/projects
+            pwd
+          output: |
+            /home/projects
+
+      result: >
+        The terminal prints the canonical path of the current working directory.
+
+      notes:
+        - "The command takes no arguments."
+        - "The path is always printed in canonical form."
+        - "The current working directory affects commands that use relative paths."
+
+      common_mistakes:
+        - mistake: "Confusing the current directory with the filesystem root."
+          explanation: >
+            The current working directory is the directory currently being
+            used by the terminal. It can change with cd.
+
+      limitations: []
+
+      status: "implemented"
+
+      related_commands:
+        - "cd"
+        - "ls"

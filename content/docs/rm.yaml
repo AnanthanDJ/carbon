@@ -1,0 +1,59 @@
+name: 
+      summary: "Deletes a file."
+
+      purpose: >
+        Permanently removes a single file from the filesystem.
+
+      syntax:
+        - "rm <file>"
+
+      parameters:
+        - name: "file"
+          required: true
+          description: "The path of the file to delete."
+
+      examples:
+        - command: "rm notes.txt"
+          output: |
+            File deleted.
+
+        - command: "rm /home/projects/old.txt"
+          output: |
+            File deleted.
+
+      result: >
+        The specified file is removed from the filesystem.
+
+      notes:
+        - "Only one file can be deleted per command."
+        - "rm does not currently delete directories."
+        - "Deletion cannot currently be performed recursively."
+        - "Deleted files cannot be recovered through rm."
+
+      common_mistakes:
+        - mistake: "Attempting to delete a directory with rm."
+          explanation: >
+            Directories must be removed using rmdir when they are empty.
+
+        - mistake: "Using rm on a file that does not exist."
+          explanation: "The target file must exist."
+
+      errors:
+        - name: "File not found"
+          condition: "The specified file does not exist."
+
+        - name: "Target is a directory"
+          condition: "The specified path refers to a directory."
+
+      limitations:
+        - "Recursive deletion is not supported."
+        - "Force deletion is not supported."
+        - "Multiple files are not supported."
+
+      status: "implemented"
+
+      related_commands:
+        - "touch"
+        - "cat"
+        - "rmdir"
+        - "ls"

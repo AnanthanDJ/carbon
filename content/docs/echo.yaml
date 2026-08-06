@@ -1,0 +1,50 @@
+name: 
+      summary: "Prints text to the terminal."
+
+      purpose: >
+        Writes the supplied text to the terminal output.
+
+      syntax:
+        - "echo <text>"
+
+      parameters:
+        - name: "text"
+          required: true
+          description: "The text to print to the terminal."
+
+      examples:
+        - command: "echo Hello Carbon"
+          output: |
+            Hello Carbon
+
+        - command: "echo Hello World"
+          output: |
+            Hello World
+
+      result: >
+        The supplied arguments are printed to the terminal, separated by spaces.
+
+      notes:
+        - "All arguments are printed separated by spaces."
+        - "Variable expansion is not supported."
+        - "Escape sequences are not interpreted."
+
+      common_mistakes:
+        - mistake: "Expecting variables to be expanded."
+          explanation: >
+            Carbon currently prints variable-like text literally rather than
+            resolving variables.
+
+        - mistake: "Expecting escape sequences to be interpreted."
+          explanation: >
+            Escape sequences are currently treated as ordinary input.
+
+      limitations:
+        - "No variable expansion."
+        - "No escape sequence processing."
+
+      status: "implemented"
+
+      related_commands:
+        - "clear"
+
