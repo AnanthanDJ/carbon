@@ -1,0 +1,59 @@
+id: 2.4
+title: "Ask for Help"
+difficulty: "Beginner"
+estimated_time: "4 minutes"
+
+story: >
+  The paths ahead become more complex. Even experienced explorers
+  consult their guidebooks before continuing into unknown territory.
+
+mission: >
+  Display the help information for the cd command.
+
+objective:
+  concept: "Learning command documentation"
+  command: "help"
+  syntax: "help cd"
+
+explanation: >
+  Since cd is a shell built-in command, help cd displays its
+  documentation, available options, and usage information.
+  Reading documentation is one of the fastest ways to become
+  confident with Linux.
+
+command: "help cd"
+
+expected_output: |
+  cd: cd [-L|[-P [-e]] [-@]] [dir]
+  Change the shell working directory.
+  ...
+
+hints:
+  - "Type help followed by the command name."
+  - "Read the description before the options."
+  - "You don't need to memorize everything."
+
+common_mistakes:
+  - mistake: "Running cd --help"
+    reason: "cd is a shell built-in; help cd is preferred."
+  - mistake: "Ignoring documentation"
+    reason: "Reading help builds long-term confidence."
+
+challenge:
+  description: "Read the help page for pwd."
+  example: "help pwd"
+
+learning_points:
+  - "Documentation explains command behavior."
+  - "Shell built-ins use the help command."
+  - "Learning to read help saves time."
+
+victory_message: >
+  You've mastered the basics of navigating the filesystem.
+  The gates to Chapter 3 are now unlocked.
+
+rewards:
+  - "Help-based navigation knowledge"
+  - "Confidence reading documentation"
+  - "Stage 3 unlocked"
+  - "XP +20"

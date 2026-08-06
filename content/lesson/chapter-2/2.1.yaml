@@ -1,0 +1,58 @@
+id: 2.1
+title: "Where Am I?"
+difficulty: "Beginner"
+estimated_time: "3 minutes"
+
+story: >
+  The Terminal Realm is vast, filled with countless directories and
+  hidden paths. Before setting off, every explorer must know exactly
+  where they are standing.
+
+mission: >
+  Display your current working directory.
+
+objective:
+  concept: "Finding the current directory"
+  command: "pwd"
+  syntax: "pwd"
+
+explanation: >
+  The pwd command stands for "Print Working Directory."
+  It shows the absolute path of the directory you're currently in,
+  making it easier to understand your location before navigating.
+
+command: "pwd"
+
+expected_output: |
+  /home/student
+
+hints:
+  - "The command has no arguments."
+  - "The output depends on where you currently are."
+  - "Every directory has a unique path."
+
+common_mistakes:
+  - mistake: "Typing PWD"
+    reason: "Linux commands are case-sensitive."
+  - mistake: "Expecting the same output as the example"
+    reason: "Your current directory may be different."
+
+challenge:
+  description: "Move to another directory and run pwd again."
+  example: |
+    cd /tmp
+    pwd
+
+learning_points:
+  - "Every terminal session has a current directory."
+  - "Most commands operate relative to this directory."
+  - "Absolute paths begin with /."
+
+victory_message: >
+  You now know exactly where you stand.
+  A good explorer never gets lost.
+
+rewards:
+  - "Directory awareness"
+  - "Navigation foundation"
+  - "XP +10"

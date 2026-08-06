@@ -1,0 +1,57 @@
+id: 1.2
+title: "Clear the View"
+difficulty: "Beginner"
+estimated_time: "2 minutes"
+
+story: >
+  After sending your first message, the screen is cluttered with old
+  output. A clean workspace helps every adventurer focus on the next
+  challenge.
+
+mission: >
+  Clear everything currently visible in the terminal.
+
+objective:
+  concept: "Cleaning the terminal screen"
+  command: "clear"
+  syntax: "clear"
+
+explanation: >
+  The clear command removes previous output from your screen,
+  giving you a fresh workspace. It does not delete files or erase
+  command history—it only clears what is currently displayed.
+
+command: "clear"
+
+expected_output: |
+  The terminal window becomes blank with the cursor at the top.
+
+hints:
+  - "The command has no arguments."
+  - "Simply type clear and press Enter."
+
+common_mistakes:
+  - mistake: "Typing Clear"
+    reason: "Linux commands are lowercase."
+  - mistake: "Expecting command history to disappear"
+    reason: "History remains available even after clearing the screen."
+
+challenge:
+  description: "Run echo, then use clear to clean the screen."
+  example: |
+    echo "Practice"
+    clear
+
+learning_points:
+  - "Keeping a clean workspace improves readability."
+  - "Clearing the screen does not remove files."
+  - "Command history is preserved."
+
+victory_message: >
+  The screen is spotless. With a clear view ahead,
+  you're ready for the next mission.
+
+rewards:
+  - "Screen management skill"
+  - "Cleaner workflow"
+  - "XP +10"

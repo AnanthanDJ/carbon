@@ -1,0 +1,54 @@
+id: 3.3
+title: "Read the File"
+difficulty: "Beginner"
+estimated_time: "4 minutes"
+
+story: >
+  Before continuing your journey, inspect your journal to see what it
+  contains.
+
+mission: >
+  Display the contents of diary.txt.
+
+objective:
+  concept: "Viewing file contents"
+  command: "cat"
+  syntax: "cat FILE"
+
+explanation: >
+  The cat command displays the contents of a file directly in the
+  terminal. It is useful for quickly reading text files.
+
+command: "cat terminal-camp/diary.txt"
+
+expected_output: |
+  (The file is empty, so no text is displayed.)
+
+hints:
+  - "Empty files produce no visible output."
+  - "cat does not modify the file."
+
+common_mistakes:
+  - mistake: "Expecting placeholder text"
+    reason: "An empty file has nothing to display."
+  - mistake: "Using the wrong filename"
+    reason: "Linux filenames are case-sensitive."
+
+challenge:
+  description: "Create a second file and display it with cat."
+  example: |
+    touch terminal-camp/log.txt
+    cat terminal-camp/log.txt
+
+learning_points:
+  - "cat reads files."
+  - "Empty files display nothing."
+  - "Reading a file does not change it."
+
+victory_message: >
+  You have inspected your journal and confirmed its contents.
+
+rewards:
+  - "File viewing"
+  - "Content inspection"
+  - "XP +15"
