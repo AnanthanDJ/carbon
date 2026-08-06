@@ -1,0 +1,55 @@
+id: 3.1
+title: "Create a Directory"
+difficulty: "Beginner"
+estimated_time: "4 minutes"
+
+story: >
+  Every adventurer needs a safe place to store supplies. Before you
+  can keep files organized, you must build a new camp in the
+  filesystem.
+
+mission: >
+  Create a new directory named terminal-camp.
+
+objective:
+  concept: "Creating directories"
+  command: "mkdir"
+  syntax: "mkdir DIRECTORY"
+
+explanation: >
+  The mkdir command creates one or more new directories. Directories
+  help organize files into logical groups and keep your workspace
+  tidy.
+
+command: "mkdir terminal-camp"
+
+expected_output: |
+  (No output)
+
+hints:
+  - "A successful mkdir command is usually silent."
+  - "Use ls afterward to verify the directory exists."
+
+common_mistakes:
+  - mistake: "Creating a directory that already exists"
+    reason: "mkdir reports an error if the name is already in use."
+  - mistake: "Including spaces without quotes"
+    reason: "Spaces separate command arguments."
+
+challenge:
+  description: "Create another directory named projects."
+  example: "mkdir projects"
+
+learning_points:
+  - "Directories organize files."
+  - "mkdir creates new folders."
+  - "Use ls to confirm your work."
+
+victory_message: >
+  Your camp has been built. You now have a place to organize your
+  journey.
+
+rewards:
+  - "Folder creation"
+  - "Workspace organization"
+  - "XP +15"

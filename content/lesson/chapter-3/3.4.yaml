@@ -1,0 +1,53 @@
+id: 3.4
+title: "Remove the File"
+difficulty: "Intermediate"
+estimated_time: "5 minutes"
+
+story: >
+  Not every record deserves to remain forever. Sometimes old files
+  must be removed to keep your workspace clean.
+
+mission: >
+  Delete diary.txt from terminal-camp.
+
+objective:
+  concept: "Removing files"
+  command: "rm"
+  syntax: "rm FILE"
+
+explanation: >
+  The rm command permanently removes files. Unlike many graphical
+  file managers, deleted files are typically not moved to a recycle
+  bin, so use rm carefully.
+
+command: "rm terminal-camp/diary.txt"
+
+expected_output: |
+  (No output)
+
+hints:
+  - "Check the file exists before removing it."
+  - "Verify deletion with ls terminal-camp."
+
+common_mistakes:
+  - mistake: "Deleting the wrong file"
+    reason: "rm permanently removes files."
+  - mistake: "Using an incorrect path"
+    reason: "The file must exist at the specified location."
+
+challenge:
+  description: "Delete the notes.txt file you created earlier."
+  example: "rm terminal-camp/notes.txt"
+
+learning_points:
+  - "rm deletes files."
+  - "Always double-check filenames."
+  - "Verify deletion after removing files."
+
+victory_message: >
+  The unnecessary file has been safely removed.
+
+rewards:
+  - "File removal"
+  - "Safe cleanup practices"
+  - "XP +20"

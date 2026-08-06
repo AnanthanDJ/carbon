@@ -1,0 +1,64 @@
+id: 1.3
+title: "Ask for Help"
+difficulty: "Beginner"
+estimated_time: "5 minutes"
+
+story: >
+  Every explorer eventually reaches a command they do not understand.
+  Fortunately, the Terminal Realm provides guidance to those who know
+  how to ask.
+
+mission: >
+  Display the built-in help information for shell commands.
+
+objective:
+  concept: "Getting command help"
+  command: "help"
+  syntax: "help [COMMAND]"
+
+explanation: >
+  The help command provides documentation for shell built-in commands.
+  You can run help by itself to see available built-ins or specify a
+  command such as help echo to learn about that command.
+
+command: "help"
+
+expected_output: |
+  GNU bash, version ...
+  These shell commands are defined internally...
+  ...
+  help
+  echo
+  cd
+  pwd
+  ...
+
+hints:
+  - "Type help exactly as shown."
+  - "Scroll if the output is longer than your screen."
+  - "Try help echo after completing the lesson."
+
+common_mistakes:
+  - mistake: "Running help for external commands"
+    reason: "Some commands are not shell built-ins."
+  - mistake: "Expecting a graphical help window"
+    reason: "Documentation is displayed directly in the terminal."
+
+challenge:
+  description: "View help for the echo command."
+  example: "help echo"
+
+learning_points:
+  - "Linux provides built-in documentation."
+  - "Reading documentation is an essential terminal skill."
+  - "Most commands have manuals or help pages."
+
+victory_message: >
+  You have learned how to seek guidance whenever you encounter an
+  unfamiliar command. Chapter 2 has been unlocked.
+
+rewards:
+  - "Access to built-in documentation"
+  - "Self-learning ability"
+  - "Stage 2 unlocked"
+  - "XP +20"

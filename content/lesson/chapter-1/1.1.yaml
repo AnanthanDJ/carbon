@@ -1,0 +1,59 @@
+id: 1.1
+title: "Echo the Message"
+difficulty: "Beginner"
+estimated_time: "3 minutes"
+
+story: >
+  You awaken inside the Terminal Realm with nothing but a blinking cursor.
+  Before the guardians allow you to continue, you must prove you can
+  communicate through the command line. Your first message will echo
+  across the realm.
+
+mission: >
+  Use the echo command to display a greeting in the terminal.
+
+objective:
+  concept: "Printing text"
+  command: "echo"
+  syntax: "echo [TEXT]"
+
+explanation: >
+  The echo command prints text directly to the terminal.
+  It is one of the simplest Linux commands and is often used to
+  display messages, debug shell scripts, or show variable values.
+
+command: 'echo "Hello, Terminal!"'
+
+expected_output: |
+  Hello, Terminal!
+
+hints:
+  - "Type the command exactly as shown."
+  - "Keep the quotation marks around the message."
+  - "Press Enter to execute the command."
+
+common_mistakes:
+  - mistake: "Typing Hello, Terminal! without echo"
+    reason: "The terminal will try to execute Hello as a command."
+  - mistake: "Misspelling echo"
+    reason: "Linux commands are case-sensitive."
+  - mistake: "Forgetting the quotation marks"
+    reason: "The command still works for simple text, but quotes are recommended for phrases."
+
+challenge:
+  description: "Print your own name."
+  example: 'echo "Alex"'
+
+learning_points:
+  - "Commands tell the shell what to do."
+  - "The terminal displays command output."
+  - "Text enclosed in quotes is treated as a single string."
+
+victory_message: >
+  Your greeting echoes across the Terminal Realm.
+  The guardians recognize your presence and allow you to continue.
+
+rewards:
+  - "Confidence with terminal output"
+  - "Understanding command execution"
+  - "XP +10"
