@@ -1,0 +1,67 @@
+name: 
+      summary: "Lists files and directories in a specified directory."
+
+      purpose: >
+        Displays the children of the specified directory. When no directory
+        is provided, the current working directory is listed.
+
+      syntax:
+        - "ls"
+        - "ls <directory>"
+
+      parameters:
+        - name: "directory"
+          required: false
+          description: >
+            The directory whose contents should be listed. Supports both
+            relative and absolute paths.
+
+      examples:
+        - command: "ls"
+          output: |
+            projects
+            README.md
+            src
+
+        - command: "ls projects"
+          output: |
+            main.c
+            README.md
+            src
+
+      result: >
+        The command lists the children of the requested directory in
+        alphabetical order.
+
+      notes:
+        - "If no directory is supplied, the current working directory is used."
+        - "Relative paths are supported."
+        - "Absolute paths are supported."
+        - "Entries are listed alphabetically."
+
+      common_mistakes:
+        - mistake: "Using an unsupported option such as ls -a."
+          explanation: "Carbon does not currently support command options for ls."
+
+        - mistake: "Providing a path to a nonexistent directory."
+          explanation: "The specified directory must exist before it can be listed."
+
+      errors:
+        - name: "Directory not found"
+          condition: "The specified directory does not exist."
+
+        - name: "Invalid target"
+          condition: "The supplied path cannot be used as a directory."
+
+      limitations:
+        - "-a is not supported."
+        - "-l is not supported."
+        - "Recursive listing is not supported."
+        - "Hidden-file listing is not supported."
+
+      status: "implemented"
+
+      related_commands:
+        - "cd"
+        - "pwd"
+        - "mkdir"

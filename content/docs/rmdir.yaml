@@ -1,0 +1,64 @@
+name: 
+      summary: "Deletes an empty directory."
+
+      purpose: >
+        Removes a directory only when the directory contains no files
+        or child directories.
+
+      syntax:
+        - "rmdir <directory>"
+
+      parameters:
+        - name: "directory"
+          required: true
+          description: "The path of the directory to remove."
+
+      examples:
+        - command: |
+            mkdir temp
+            rmdir temp
+          output: |
+            Directory deleted.
+
+        - command: "rmdir old-project"
+          output: |
+            Directory deleted.
+
+      result: >
+        The specified empty directory is removed from the filesystem.
+
+      notes:
+        - "Only empty directories can be removed."
+        - "Files inside the directory must be removed before rmdir can succeed."
+        - "The command does not recursively remove directory contents."
+
+      common_mistakes:
+        - mistake: "Attempting to remove a non-empty directory."
+          explanation: >
+            rmdir only works when the target directory contains no files
+            or child directories.
+
+        - mistake: "Using rmdir on a file."
+          explanation: "rmdir requires the target to be a directory."
+
+      errors:
+        - name: "Directory not empty"
+          condition: "The target directory contains files or child directories."
+
+        - name: "Target is a file"
+          condition: "The specified path refers to a file."
+
+        - name: "Directory not found"
+          condition: "The specified directory does not exist."
+
+      limitations:
+        - "Recursive deletion is not supported."
+        - "Force deletion is not supported."
+
+      status: "implemented"
+
+      related_commands:
+        - "mkdir"
+        - "rm"
+        - "ls"
+        - "cd"

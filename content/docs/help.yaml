@@ -1,0 +1,48 @@
+name: 
+      summary: "Displays available Carbon terminal commands."
+
+      purpose: >
+        Displays a list of commands supported by the Carbon terminal and
+        provides users with an overview of available terminal operations.
+
+      syntax:
+        - "help"
+
+      parameters: []
+
+      examples:
+        - command: "help"
+          description: "Displays the available Carbon terminal commands."
+          output: |
+            Available commands:
+            help
+            echo
+            clear
+            pwd
+            ls
+            cd
+            mkdir
+            touch
+            cat
+            rm
+            rmdir
+
+      result: >
+        The terminal displays the commands currently available in Carbon.
+
+      notes:
+        - "The command takes no arguments."
+        - "The exact command list may change as Carbon adds new functionality."
+
+      common_mistakes:
+        - mistake: "Providing unnecessary arguments."
+          explanation: "help does not currently accept command-specific arguments."
+
+      limitations:
+        - "Command-specific help is not currently specified."
+
+      status: "to_be_implemented"
+
+      related_commands:
+        - "clear"
+        - "ls"

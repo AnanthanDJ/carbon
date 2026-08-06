@@ -1,0 +1,56 @@
+name: 
+      summary: "Displays the contents of a file."
+
+      purpose: >
+        Reads a single file and prints its contents to the terminal.
+
+      syntax:
+        - "cat <file>"
+
+      parameters:
+        - name: "file"
+          required: true
+          description: >
+            The path of the file whose contents should be displayed.
+
+      examples:
+        - command: "cat notes.txt"
+          output: |
+            Hello Carbon
+
+        - command: "cat README.md"
+          output: |
+    
+      result: >
+        The contents of the specified file are printed to the terminal.
+
+      notes:
+        - "Only one file can be read per command."
+        - "File contents are printed directly to the terminal."
+        - "The target must be a file."
+
+      common_mistakes:
+        - mistake: "Attempting to read a directory."
+          explanation: "cat accepts files, not directories."
+
+        - mistake: "Specifying a nonexistent file."
+          explanation: "The requested file must exist before its contents can be read."
+
+      errors:
+        - name: "File not found"
+          condition: "The specified file does not exist."
+
+        - name: "Target is a directory"
+          condition: "The specified path refers to a directory instead of a file."
+
+      limitations:
+        - "Multiple files are not supported."
+        - "Line-number output is not supported."
+        - "Paging is not supported."
+
+      status: "implemented"
+
+      related_commands:
+        - "touch"
+        - "rm"
+        - "ls"

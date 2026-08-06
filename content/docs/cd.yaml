@@ -1,0 +1,62 @@
+ name: 
+      summary: "Changes the current working directory."
+
+      purpose: >
+        Changes the terminal's current working directory to the specified
+        directory.
+
+      syntax:
+        - "cd <directory>"
+
+      parameters:
+        - name: "directory"
+          required: true
+          description: >
+            The target directory. Supports relative paths, absolute paths,
+            the current-directory reference '.', and the parent-directory
+            reference '..'.
+
+      examples:
+        - command: "cd projects"
+          description: "Changes into the projects directory."
+
+        - command: "cd /home/projects"
+          description: "Changes to an absolute directory path."
+
+        - command: "cd .."
+          description: "Moves to the parent directory."
+
+      result: >
+        The terminal's current working directory is changed to the specified
+        directory when the target is valid.
+
+      notes:
+        - "Relative paths are resolved from the current working directory."
+        - "Absolute paths are supported."
+        - "'.' refers to the current directory."
+        - "'..' refers to the parent directory."
+        - "Changing directories affects subsequent commands that use relative paths."
+
+      common_mistakes:
+        - mistake: "Attempting to cd into a file."
+          explanation: "cd requires the target path to resolve to a directory."
+
+        - mistake: "Using a directory path that does not exist."
+          explanation: "The target directory must exist before cd can enter it."
+
+      errors:
+        - name: "Directory not found"
+          condition: "The specified directory does not exist."
+
+        - name: "Target is not a directory"
+          condition: "The specified path exists but refers to a file."
+
+      limitations: []
+
+      status: "implemented"
+
+      related_commands:
+        - "pwd"
+        - "ls"
+        - "mkdir"
+
