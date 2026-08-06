@@ -16,7 +16,7 @@ pub struct AppState {
     pub config: Config,
     pub db: SqlitePool,
 
-    pub auth: AuthService<SqliteUserRepository>,
+    pub auth: AuthService<SqliteUserRepository, SqliteFilesystemRepository>,
     pub filesystem: FilesystemService<SqliteFilesystemRepository>,
 }
 
@@ -25,7 +25,7 @@ impl AppState {
         let user_repository = Arc::new(SqliteUserRepository::new(db.clone()));
         let filesystem_repository = Arc::new(SqliteFilesystemRepository::new(db.clone()));
 
-        let auth = AuthService::new(user_repository);
+        let auth = AuthService::new(user_repository, filesystem_repository.clone());
         let filesystem = FilesystemService::new(filesystem_repository);
 
         Self {

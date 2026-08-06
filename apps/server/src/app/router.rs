@@ -23,6 +23,7 @@ pub fn build(state: AppState) -> Router {
             "/auth/register",
             axum::routing::post(routes::auth::register),
         )
+        .route("/auth/login", axum::routing::post(routes::auth::login))
         .route("/terminal", axum::routing::post(routes::terminal::execute))
         .with_state(state)
 }
