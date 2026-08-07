@@ -27,7 +27,7 @@ pub async fn run() -> Result<()> {
 
     crate::app::seed_demo_user(&db).await?;
 
-    let state = AppState::new(config.clone(), db);
+    let state = AppState::new(config.clone(), db)?;
 
     let app = router::build(state);
 
