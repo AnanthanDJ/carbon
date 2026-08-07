@@ -1,6 +1,5 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LessonStatus {
@@ -10,7 +9,7 @@ pub enum LessonStatus {
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct LessonProgress {
-    pub user_id: Uuid,
+    pub user_id: i64,
     pub lesson_id: String,
     pub status: LessonStatus,
     pub started_at: DateTime<Utc>,
@@ -20,14 +19,9 @@ pub struct LessonProgress {
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct LessonAttempt {
     pub id: i64,
-
-    pub user_id: String,
-
+    pub user_id: i64,
     pub lesson_id: String,
-
     pub command: String,
-
     pub successful: bool,
-
-    pub created_at: String,
+    pub created_at: DateTime<Utc>,
 }

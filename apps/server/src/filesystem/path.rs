@@ -68,6 +68,10 @@ impl ResolvedPath {
     pub fn starts_with(&self, other: &ResolvedPath) -> bool {
         self.components.starts_with(other.components())
     }
+
+    pub fn as_path(&self) -> String {
+        self.to_string()
+    }
 }
 
 impl Default for ResolvedPath {

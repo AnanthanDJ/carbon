@@ -3,10 +3,10 @@ use std::sync::Arc;
 use crate::{
     auth::AuthService,
     filesystem::FilesystemService,
-    lesson::LessonService,
+    lesson::{LessonRuntimeService, LessonService},
     repository::{
         SqlitePool,
-        sqlite::{SqliteFilesystemRepository, SqliteUserRepository},
+        sqlite::{SqliteFilesystemRepository, SqliteLessonRepository, SqliteUserRepository},
     },
 };
 
@@ -20,6 +20,7 @@ pub struct AppState {
     pub auth: AuthService<SqliteUserRepository, SqliteFilesystemRepository>,
     pub filesystem: FilesystemService<SqliteFilesystemRepository>,
     pub lesson: LessonService,
+    pub lesson_runtime: LessonRuntimeService<SqliteLessonRepository>,
 }
 
 impl AppState {
@@ -29,8 +30,12 @@ impl AppState {
 
         let auth = AuthService::new(user_repository, filesystem_repository.clone());
         let filesystem = FilesystemService::new(filesystem_repository);
+        let lesson_repository = Arc::new(SqliteLessonRepository::new(db.clone()));
+
         let lesson = LessonService::load("test_content")?;
         //let lesson = LessonService::load("content/lessons")?;
+
+        let lesson_runtime = LessonRuntimeService::new(lesson_repository, lesson.clone());
 
         Ok(Self {
             config,
@@ -38,6 +43,7 @@ impl AppState {
             auth,
             filesystem,
             lesson,
+            lesson_runtime,
         })
     }
 }

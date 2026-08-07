@@ -26,7 +26,7 @@ CREATE TABLE filesystem_nodes (
 );
 
 CREATE TABLE lesson_progress (
-    user_id TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
     lesson_id TEXT NOT NULL,
 
     status TEXT NOT NULL DEFAULT 'in_progress',
@@ -40,7 +40,7 @@ CREATE TABLE lesson_progress (
 CREATE TABLE lesson_attempts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    user_id TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
     lesson_id TEXT NOT NULL,
 
     command TEXT NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE lesson_attempts (
 );
 
 CREATE TABLE users_current_lesson (
-    user_id TEXT PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY,
 
     lesson_id TEXT NOT NULL,
 
