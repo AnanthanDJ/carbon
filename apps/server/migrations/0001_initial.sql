@@ -29,13 +29,12 @@ CREATE TABLE lesson_progress (
     user_id TEXT NOT NULL,
     lesson_id TEXT NOT NULL,
 
-    completed INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'in_progress',
 
-    PRIMARY KEY(user_id, lesson_id),
+    started_at TEXT NOT NULL,
+    completed_at TEXT,
 
-    FOREIGN KEY(user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
+    PRIMARY KEY (user_id, lesson_id)
 );
 
 CREATE TABLE lesson_attempts (
@@ -45,13 +44,18 @@ CREATE TABLE lesson_attempts (
     lesson_id TEXT NOT NULL,
 
     command TEXT NOT NULL,
+
     successful INTEGER NOT NULL,
 
-    created_at TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
 
-    FOREIGN KEY(user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
+CREATE TABLE users_current_lesson (
+    user_id TEXT PRIMARY KEY,
+
+    lesson_id TEXT NOT NULL,
+
+    updated_at TEXT NOT NULL
 );
 
 CREATE INDEX idx_filesystem_parent

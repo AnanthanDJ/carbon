@@ -6,11 +6,15 @@ use crate::models::{LessonAttempt, LessonProgress};
 
 #[async_trait]
 pub trait LessonRepository: Send + Sync {
-    async fn progress(&self, user: Uuid, lesson: &str) -> Result<Option<LessonProgress>>;
+    async fn current_lesson(&self, user_id: Uuid) -> Result<Option<String>>;
 
-    async fn set_progress(&self, progress: &LessonProgress) -> Result<()>;
+    async fn set_current_lesson(&self, user_id: Uuid, lesson_id: &str) -> Result<()>;
 
-    async fn add_attempt(&self, attempt: &LessonAttempt) -> Result<()>;
+    async fn progress(&self, user_id: Uuid, lesson_id: &str) -> Result<Option<LessonProgress>>;
 
-    async fn attempts(&self, user: Uuid, lesson: &str) -> Result<Vec<LessonAttempt>>;
+    async fn start_lesson(&self, user_id: Uuid, lesson_id: &str) -> Result<()>;
+
+    async fn complete_lesson(&self, user_id: Uuid, lesson_id: &str) -> Result<()>;
+
+    async fn record_attempt(&self, attempt: LessonAttempt) -> Result<()>;
 }
