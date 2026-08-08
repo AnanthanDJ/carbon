@@ -12,7 +12,7 @@ pub struct CommandResult {
 pub async fn dispatch(
     state: &AppState,
     session: &mut TerminalSession,
-    command: ParsedCommand,
+    command: &ParsedCommand,
 ) -> Result<CommandResult> {
     match command.name.as_str() {
         "pwd" => cmd_pwd(state, session).await,

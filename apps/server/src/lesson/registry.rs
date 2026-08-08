@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use anyhow::{Result, bail};
+use anyhow::Result;
 
-use super::{Lesson, LessonLoader};
+use super::Lesson;
 
 /// In-memory registry of all loaded lessons.
 ///

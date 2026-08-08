@@ -1,4 +1,5 @@
 pub struct ParsedCommand {
+    pub raw: String,
     pub name: String,
     pub args: Vec<String>,
 }
@@ -10,5 +11,9 @@ pub fn parse(input: &str) -> Option<ParsedCommand> {
 
     let args = parts.map(str::to_string).collect();
 
-    Some(ParsedCommand { name, args })
+    Some(ParsedCommand {
+        raw: input.to_owned(),
+        name,
+        args,
+    })
 }

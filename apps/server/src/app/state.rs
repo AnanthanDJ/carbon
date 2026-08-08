@@ -20,7 +20,7 @@ pub struct AppState {
     pub auth: AuthService<SqliteUserRepository, SqliteFilesystemRepository>,
     pub filesystem: FilesystemService<SqliteFilesystemRepository>,
     pub lesson: LessonService,
-    pub lesson_runtime: LessonRuntimeService<SqliteLessonRepository>,
+    pub lesson_runtime: LessonRuntimeService<SqliteLessonRepository, SqliteFilesystemRepository>,
 }
 
 impl AppState {
@@ -35,7 +35,8 @@ impl AppState {
         let lesson = LessonService::load("test_content")?;
         //let lesson = LessonService::load("content/lessons")?;
 
-        let lesson_runtime = LessonRuntimeService::new(lesson_repository, lesson.clone());
+        let lesson_runtime =
+            LessonRuntimeService::new(lesson_repository, filesystem.clone(), lesson.clone());
 
         Ok(Self {
             config,

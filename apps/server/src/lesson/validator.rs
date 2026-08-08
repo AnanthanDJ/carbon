@@ -1,4 +1,9 @@
-use crate::terminal::{CommandResult, ParsedCommand, TerminalSession};
+use crate::{
+    filesystem::FilesystemService,
+    models::NodeKind,
+    repository::FilesystemRepository,
+    terminal::{CommandResult, ParsedCommand, TerminalSession},
+};
 
 use super::{Lesson, Validator};
 
@@ -30,12 +35,16 @@ impl ValidationResult {
 pub struct LessonValidator;
 
 impl LessonValidator {
-    pub fn validate(
+    pub async fn validate<R>(
         lesson: &Lesson,
+        filesystem: &FilesystemService<R>,
         session: &TerminalSession,
         command: &ParsedCommand,
         result: &CommandResult,
-    ) -> ValidationResult {
+    ) -> ValidationResult
+    where
+        R: FilesystemRepository,
+    {
         match &lesson.mission.validator {
             Validator::ExactCommand { command: expected } => {
                 let mut actual = command.name.clone();
@@ -76,17 +85,52 @@ impl LessonValidator {
                 }
             }
 
-            Validator::FileExists { .. } => {
-                ValidationResult::failure("FileExists validator not implemented.")
+            Validator::FileExists { path } => match filesystem.resolve_node(session, path).await {
+                Ok(node) => {
+                    if matches!(node.kind, NodeKind::File) {
+                        ValidationResult::success()
+                    } else {
+                        ValidationResult::failure(format!("'{}' exists but is not a file.", path))
+                    }
+                }
+
+                Err(_) => ValidationResult::failure(format!("Expected file '{}' to exist.", path)),
+            },
+
+            Validator::DirectoryExists { path } => {
+                match filesystem.resolve_node(session, path).await {
+                    Ok(node) => {
+                        if matches!(node.kind, NodeKind::Directory) {
+                            ValidationResult::success()
+                        } else {
+                            ValidationResult::failure(format!(
+                                "'{}' exists but is not a directory.",
+                                path
+                            ))
+                        }
+                    }
+
+                    Err(_) => ValidationResult::failure(format!(
+                        "Expected directory '{}' to exist.",
+                        path
+                    )),
+                }
             }
 
-            Validator::DirectoryExists { .. } => {
-                ValidationResult::failure("DirectoryExists validator not implemented.")
-            }
+            Validator::FileContains { path, text } => match filesystem.cat(session, path).await {
+                Ok(contents) => {
+                    if contents.contains(text) {
+                        ValidationResult::success()
+                    } else {
+                        ValidationResult::failure(format!(
+                            "File '{}' does not contain '{}'.",
+                            path, text
+                        ))
+                    }
+                }
 
-            Validator::FileContains { .. } => {
-                ValidationResult::failure("FileContains validator not implemented.")
-            }
+                Err(e) => ValidationResult::failure(e.to_string()),
+            },
         }
     }
 }

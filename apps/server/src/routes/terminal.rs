@@ -1,7 +1,7 @@
 use axum::{Json, extract::State, http::StatusCode};
 use serde::{Deserialize, Serialize};
 
-use crate::{app::AppState, terminal::TerminalSession};
+use crate::{app::AppState, lesson::LessonOutcome, terminal::TerminalSession};
 
 #[derive(Deserialize)]
 pub struct TerminalRequest {
@@ -13,6 +13,7 @@ pub struct TerminalRequest {
 pub struct TerminalResponse {
     pub stdout: String,
     pub cwd: String,
+    pub lesson: Option<LessonOutcome>,
 }
 
 pub async fn execute(
@@ -26,12 +27,22 @@ pub async fn execute(
 
     let parsed = crate::terminal::parse(&request.command).ok_or(StatusCode::BAD_REQUEST)?;
 
-    let result = crate::terminal::dispatch(&state, &mut session, parsed)
+    let result = crate::terminal::dispatch(&state, &mut session, &parsed)
         .await
         .map_err(|_| StatusCode::BAD_REQUEST)?;
+
+    let lesson = state
+        .lesson_runtime
+        .validate(
+            1, // demo user for now
+            &session, &parsed, &result,
+        )
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
     Ok(Json(TerminalResponse {
         stdout: result.stdout,
         cwd: session.cwd.to_string(),
+        lesson,
     }))
 }
