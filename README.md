@@ -1,7 +1,5 @@
 <div align="center">
-    <img src="docs/res/logo.svg" height="350" alt="Carbon">
-
-# Carbon
+    <h1><img src="docs/res/logo.svg" height="350" alt="Carbon"></h1>
 
 ### Your First Terminal.
 
@@ -211,7 +209,7 @@ Carbon follows a layered architecture that separates presentation, business logi
 ```
                        Frontend (React)
                               │
-                     REST API (Axum)
+                       REST API (Axum)
                               │
                 ┌─────────────┴─────────────┐
                 │                           │
