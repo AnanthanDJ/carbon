@@ -9,7 +9,7 @@ pub enum LessonStatus {
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct LessonProgress {
-    pub user_id: i64,
+    pub user_id: String,
     pub lesson_id: String,
     pub status: LessonStatus,
     pub started_at: DateTime<Utc>,
@@ -19,9 +19,9 @@ pub struct LessonProgress {
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct LessonAttempt {
     pub id: i64,
-    pub user_id: i64,
+    pub user_id: String,
     pub lesson_id: String,
     pub command: String,
     pub successful: bool,
-    pub created_at: DateTime<Utc>,
+    pub created_at: String,
 }

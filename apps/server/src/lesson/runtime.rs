@@ -47,7 +47,7 @@ where
         }
     }
 
-    pub async fn current(&self, user_id: i64) -> Result<Option<Lesson>> {
+    pub async fn current(&self, user_id: String) -> Result<Option<Lesson>> {
         let Some(id) = self.repository.current_lesson(user_id).await? else {
             return Ok(None);
         };
@@ -55,8 +55,10 @@ where
         Ok(self.lessons.get(&id).cloned())
     }
 
-    pub async fn start(&self, user_id: i64, lesson_id: &str) -> Result<()> {
-        self.repository.start_lesson(user_id, lesson_id).await?;
+    pub async fn start(&self, user_id: String, lesson_id: &str) -> Result<()> {
+        self.repository
+            .start_lesson(user_id.clone(), lesson_id)
+            .await?;
 
         self.repository
             .set_current_lesson(user_id, lesson_id)
@@ -65,14 +67,14 @@ where
         Ok(())
     }
 
-    pub async fn complete(&self, user_id: i64, lesson_id: &str) -> Result<()> {
+    pub async fn complete(&self, user_id: String, lesson_id: &str) -> Result<()> {
         self.repository.complete_lesson(user_id, lesson_id).await?;
 
         Ok(())
     }
 
-    pub async fn advance(&self, user_id: i64) -> Result<Option<Lesson>> {
-        let Some(current) = self.current(user_id).await? else {
+    pub async fn advance(&self, user_id: String) -> Result<Option<Lesson>> {
+        let Some(current) = self.current(user_id.clone()).await? else {
             return Ok(None);
         };
 
@@ -87,12 +89,12 @@ where
 
     pub async fn validate(
         &self,
-        user_id: i64,
+        user_id: String,
         session: &TerminalSession,
         command: &ParsedCommand,
         result: &CommandResult,
     ) -> Result<Option<LessonOutcome>> {
-        let Some(current) = self.current(user_id).await? else {
+        let Some(current) = self.current(user_id.clone()).await? else {
             return Ok(None);
         };
 
@@ -102,11 +104,11 @@ where
         self.repository
             .record_attempt(LessonAttempt {
                 id: 0,
-                user_id,
+                user_id: user_id.clone(),
                 lesson_id: current.id.clone(),
                 command: command.raw.clone(),
                 successful: validation.passed,
-                created_at: Utc::now(),
+                created_at: Utc::now().to_rfc2822(),
             })
             .await?;
 
@@ -118,9 +120,9 @@ where
             }));
         }
 
-        self.complete(user_id, &current.id).await?;
+        self.complete(user_id.clone(), &current.id).await?;
 
-        let next = self.advance(user_id).await?;
+        let next = self.advance(user_id.clone()).await?;
 
         Ok(Some(LessonOutcome {
             completed: true,

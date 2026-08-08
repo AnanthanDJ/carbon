@@ -2,7 +2,10 @@ use anyhow::Result;
 use async_trait::async_trait;
 use sqlx::SqlitePool;
 
-use crate::{models::User, repository::UserRepository};
+use crate::{
+    models::{Session, User},
+    repository::UserRepository,
+};
 
 #[derive(Clone)]
 pub struct SqliteUserRepository {
@@ -68,5 +71,50 @@ impl UserRepository for SqliteUserRepository {
         .await?;
 
         Ok(user)
+    }
+
+    async fn create_session(&self, session: &Session) -> Result<()> {
+        sqlx::query(
+            r#"
+        INSERT INTO sessions (token, user_id, created_at)
+        VALUES (?, ?, ?)
+        "#,
+        )
+        .bind(&session.token)
+        .bind(session.user_id.clone())
+        .bind(session.created_at.clone())
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
+
+    async fn find_session(&self, token: &str) -> Result<Option<Session>> {
+        let session = sqlx::query_as::<_, Session>(
+            r#"
+        SELECT token, user_id, created_at
+        FROM sessions
+        WHERE token = ?
+        "#,
+        )
+        .bind(token)
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(session)
+    }
+
+    async fn delete_session(&self, token: &str) -> Result<()> {
+        sqlx::query(
+            r#"
+        DELETE FROM sessions
+        WHERE token = ?
+        "#,
+        )
+        .bind(token)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
     }
 }

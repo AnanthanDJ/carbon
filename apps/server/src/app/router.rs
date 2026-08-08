@@ -24,6 +24,7 @@ pub fn build(state: AppState) -> Router {
             axum::routing::post(routes::auth::register),
         )
         .route("/auth/login", axum::routing::post(routes::auth::login))
+        .route("/auth/me", get(routes::auth::me))
         .route("/terminal", axum::routing::post(routes::terminal::execute))
         .route("/lessons", get(routes::lesson::list))
         .route("/lessons/{id}", get(routes::lesson::get))

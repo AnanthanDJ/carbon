@@ -1,10 +1,10 @@
 use axum::{
     Json,
     extract::{Path, State},
-    http::StatusCode,
+    http::{HeaderMap, StatusCode},
 };
 
-use crate::{app::AppState, lesson::Lesson};
+use crate::{app::AppState, lesson::Lesson, routes::auth_helper::authenticated_user_id};
 
 pub async fn list(State(state): State<AppState>) -> Json<Vec<crate::lesson::Lesson>> {
     Json(state.lesson.list().into_iter().cloned().collect())
@@ -23,10 +23,15 @@ pub async fn get(
     Ok(Json(lesson))
 }
 
-pub async fn current(State(state): State<AppState>) -> Result<Json<Lesson>, StatusCode> {
+pub async fn current(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Lesson>, StatusCode> {
+    let user_id = authenticated_user_id(&state, &headers).await?;
+
     let lesson = state
         .lesson_runtime
-        .current(1) // demo user for now
+        .current(user_id.clone())
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
         .ok_or(StatusCode::NOT_FOUND)?;

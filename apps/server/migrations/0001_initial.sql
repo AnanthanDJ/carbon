@@ -58,6 +58,14 @@ CREATE TABLE users_current_lesson (
     updated_at TEXT NOT NULL
 );
 
+CREATE TABLE sessions (
+    token TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE INDEX idx_filesystem_parent
 ON filesystem_nodes(parent_id);
 

@@ -21,7 +21,7 @@ impl SqliteLessonRepository {
 
 #[async_trait]
 impl LessonRepository for SqliteLessonRepository {
-    async fn current_lesson(&self, user_id: i64) -> Result<Option<String>> {
+    async fn current_lesson(&self, user_id: String) -> Result<Option<String>> {
         let lesson = sqlx::query_scalar::<_, String>(
             r#"
         SELECT lesson_id
@@ -36,7 +36,7 @@ impl LessonRepository for SqliteLessonRepository {
         Ok(lesson)
     }
 
-    async fn set_current_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()> {
+    async fn set_current_lesson(&self, user_id: String, lesson_id: &str) -> Result<()> {
         sqlx::query(
             r#"
         INSERT INTO users_current_lesson (
@@ -59,7 +59,7 @@ impl LessonRepository for SqliteLessonRepository {
         Ok(())
     }
 
-    async fn progress(&self, user_id: i64, lesson_id: &str) -> Result<Option<LessonProgress>> {
+    async fn progress(&self, user_id: String, lesson_id: &str) -> Result<Option<LessonProgress>> {
         let row = sqlx::query(
             r#"
         SELECT
@@ -71,7 +71,7 @@ impl LessonRepository for SqliteLessonRepository {
           AND lesson_id = ?
         "#,
         )
-        .bind(user_id)
+        .bind(&user_id)
         .bind(lesson_id)
         .fetch_optional(&self.pool)
         .await?;
@@ -99,7 +99,7 @@ impl LessonRepository for SqliteLessonRepository {
         }))
     }
 
-    async fn start_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()> {
+    async fn start_lesson(&self, user_id: String, lesson_id: &str) -> Result<()> {
         let now = Utc::now().to_rfc3339();
 
         sqlx::query(
@@ -124,7 +124,7 @@ impl LessonRepository for SqliteLessonRepository {
         Ok(())
     }
 
-    async fn complete_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()> {
+    async fn complete_lesson(&self, user_id: String, lesson_id: &str) -> Result<()> {
         let now = Utc::now().to_rfc3339();
 
         sqlx::query(
@@ -165,7 +165,7 @@ impl LessonRepository for SqliteLessonRepository {
         .bind(&attempt.lesson_id)
         .bind(&attempt.command)
         .bind(attempt.successful)
-        .bind(attempt.created_at.to_rfc3339())
+        .bind(attempt.created_at)
         .execute(&self.pool)
         .await?;
 

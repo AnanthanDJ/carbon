@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{
     auth::password,
-    models::{FilesystemNode, NodeKind, User},
+    models::{FilesystemNode, NodeKind, Session, User},
     repository::{FilesystemRepository, UserRepository},
 };
 
@@ -70,9 +70,17 @@ where
 
         self.filesystem.create_node(&home).await?;
 
-        Ok(crate::auth::jwt::Token {
-            value: String::new(),
-        })
+        let token = Uuid::new_v4().to_string();
+
+        self.users
+            .create_session(&Session {
+                token: token.clone(),
+                user_id: user.id.clone(),
+                created_at: Utc::now().to_rfc3339(),
+            })
+            .await?;
+
+        Ok(crate::auth::jwt::Token { value: token })
     }
 
     pub async fn login(&self, username: &str, password: &str) -> Result<crate::auth::jwt::Token> {
@@ -88,8 +96,33 @@ where
             anyhow::bail!("invalid credentials");
         }
 
-        Ok(crate::auth::jwt::Token {
-            value: String::new(),
-        })
+        let token = uuid::Uuid::new_v4().to_string();
+
+        self.users
+            .create_session(&Session {
+                token: token.clone(),
+                user_id: user.id,
+                created_at: Utc::now().to_rfc3339(),
+            })
+            .await?;
+
+        Ok(crate::auth::jwt::Token { value: token })
+    }
+
+    pub async fn authenticate(&self, token: &str) -> Result<String> {
+        let session = self
+            .users
+            .find_session(token)
+            .await?
+            .ok_or_else(|| anyhow::anyhow!("invalid session"))?;
+
+        Ok(session.user_id)
+    }
+
+    pub async fn current_user(&self, user_id: &str) -> Result<User> {
+        self.users
+            .find_by_id(user_id)
+            .await?
+            .ok_or_else(|| anyhow::anyhow!("user not found"))
     }
 }

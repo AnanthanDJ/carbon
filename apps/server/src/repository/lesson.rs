@@ -5,15 +5,15 @@ use crate::models::{LessonAttempt, LessonProgress};
 
 #[async_trait]
 pub trait LessonRepository: Send + Sync {
-    async fn current_lesson(&self, user_id: i64) -> Result<Option<String>>;
+    async fn current_lesson(&self, user_id: String) -> Result<Option<String>>;
 
-    async fn set_current_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()>;
+    async fn set_current_lesson(&self, user_id: String, lesson_id: &str) -> Result<()>;
 
-    async fn progress(&self, user_id: i64, lesson_id: &str) -> Result<Option<LessonProgress>>;
+    async fn progress(&self, user_id: String, lesson_id: &str) -> Result<Option<LessonProgress>>;
 
-    async fn start_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()>;
+    async fn start_lesson(&self, user_id: String, lesson_id: &str) -> Result<()>;
 
-    async fn complete_lesson(&self, user_id: i64, lesson_id: &str) -> Result<()>;
+    async fn complete_lesson(&self, user_id: String, lesson_id: &str) -> Result<()>;
 
     async fn record_attempt(&self, attempt: LessonAttempt) -> Result<()>;
 }
