@@ -4,53 +4,185 @@
 >
 > **Audience:** Frontend Developers
 >
-> **Base URL**
+> **Project:** Carbon Server
 >
-> ```
-> http://localhost:3000
-> ```
+> **Version:** v1 (Buildathon)
 
 ---
 
 # Overview
 
-The Carbon backend exposes a small REST API responsible for terminal execution, lesson progression, authentication, and application state.
+Carbon exposes a small HTTP JSON API.
 
-All responses are JSON.
+The backend is responsible for:
 
-The backend is considered the single source of truth for:
+- authentication
+- terminal execution
+- virtual filesystem
+- lesson progression
+- persistence
 
-* terminal execution
-* virtual filesystem
-* lesson progression
-* user authentication
-* persistent state
+The frontend is responsible only for presentation.
+
+---
+
+# Base URL
+
+Development:
+
+```
+http://localhost:3000
+```
 
 ---
 
 # Authentication
 
-Authenticated endpoints require a JWT.
+Carbon currently uses **server-side session tokens**.
+
+Successful authentication returns an opaque session token.
+
+Example:
+
+```json
+{
+    "success": true,
+    "token": "8d22d3d7-a2b8-4d9b-b8aa-7f66b13db97d"
+}
+```
+
+Authenticated requests must include:
 
 ```
 Authorization: Bearer <token>
 ```
 
-Unauthenticated requests should receive:
+Example:
 
-```http
-401 Unauthorized
+```
+Authorization: Bearer 8d22d3d7-a2b8-4d9b-b8aa-7f66b13db97d
 ```
 
 ---
 
-# POST /terminal
+# Authentication Endpoints
 
-Executes a terminal command inside the user's virtual terminal session.
+## Register
+
+```
+POST /auth/register
+```
+
+Creates a new user.
+
+### Request
+
+```json
+{
+    "username": "alice",
+    "password": "password123"
+}
+```
+
+### Response
+
+```json
+{
+    "success": true,
+    "token": "<session-token>"
+}
+```
+
+### Errors
+
+| Status | Meaning |
+|---------|---------|
+|400|Username already exists|
 
 ---
 
-## Request
+## Login
+
+```
+POST /auth/login
+```
+
+Authenticates an existing user.
+
+### Request
+
+```json
+{
+    "username": "alice",
+    "password": "password123"
+}
+```
+
+### Response
+
+```json
+{
+    "success": true,
+    "token": "<session-token>"
+}
+```
+
+### Errors
+
+| Status | Meaning |
+|---------|---------|
+|401|Invalid username or password|
+
+---
+
+## Current User
+
+```
+GET /auth/me
+```
+
+Returns information about the authenticated user.
+
+### Headers
+
+```
+Authorization: Bearer <token>
+```
+
+### Response
+
+```json
+{
+    "id": "2d3e47d5-1df6-49cb-b8a7-fdb63d99b2dd",
+    "username": "alice"
+}
+```
+
+### Errors
+
+| Status | Meaning |
+|---------|---------|
+|401|Missing or invalid session|
+
+---
+
+# Terminal
+
+## Execute Command
+
+```
+POST /terminal
+```
+
+Executes a terminal command.
+
+### Headers
+
+```
+Authorization: Bearer <token>
+```
+
+### Request
 
 ```json
 {
@@ -58,176 +190,120 @@ Executes a terminal command inside the user's virtual terminal session.
 }
 ```
 
----
-
-## Successful Response
+### Response
 
 ```json
 {
     "stdout": "",
-
-    "cwd": "/",
-
+    "cwd": "/home",
     "lesson": {
         "completed": true,
-
         "current": {
-            "id": "c1l1",
-            "title": "Hello Terminal"
+            "...": "..."
         },
-
         "next": {
-            "id": "c1l2",
-            "title": "pwd"
+            "...": "..."
         }
     }
 }
 ```
 
+### Response Fields
+
+| Field | Description |
+|-------|-------------|
+|stdout|Command output|
+|cwd|Current working directory after execution|
+|lesson|Updated lesson state (if applicable)|
+
+### Errors
+
+Typical failures include:
+
+```
+Unknown command
+No such file or directory
+File already exists
+Directory not empty
+Not a directory
+Not a file
+```
+
 ---
 
-## Validation Failure
+# Lessons
+
+## Current Lesson
+
+```
+GET /lessons/current
+```
+
+Returns the learner's active lesson.
+
+### Headers
+
+```
+Authorization: Bearer <token>
+```
+
+### Response
 
 ```json
 {
-    "stdout": "",
-
-    "cwd": "/",
-
-    "lesson": {
-        "completed": false,
-
-        "current": {
-            "id": "c1l1",
-            "title": "Hello Terminal"
-        },
-
-        "next": null
-    }
+    "...": "lesson data"
 }
 ```
 
 ---
 
-## Command Error
+## List Lessons
 
-```json
-{
-    "stdout": "No such file or directory.",
-
-    "cwd": "/projects",
-
-    "lesson": null
-}
+```
+GET /lessons
 ```
 
-The command failed before lesson validation.
+Returns every available lesson.
 
----
-
-# GET /lessons
-
-Returns every lesson loaded by the backend.
-
----
-
-## Response
+### Response
 
 ```json
 [
     {
-        "id": "c1l1",
-        "title": "Hello Terminal",
-        "description": "...",
-        "mission": {
-            ...
-        }
-    },
-
-    {
-        "id": "c1l2",
-        "title": "pwd",
-        "description": "...",
-        "mission": {
-            ...
-        }
+        "...": "..."
     }
 ]
 ```
 
 ---
 
-# GET /lessons/{id}
+## Get Lesson
+
+```
+GET /lessons/{id}
+```
 
 Returns a single lesson.
 
----
-
-## Example
-
-```
-GET /lessons/c1l1
-```
-
----
-
-## Response
+### Response
 
 ```json
 {
-    "id": "c1l1",
-    "title": "Hello Terminal",
-    "description": "...",
-
-    "mission": {
-        ...
-    }
+    "...": "..."
 }
 ```
 
 ---
 
-## Not Found
+# Health
 
-```http
-404 Not Found
+## Health Check
+
+```
+GET /health
 ```
 
----
-
-# GET /lessons/current
-
-Returns the user's currently active lesson.
-
----
-
-## Response
-
-```json
-{
-    "id": "c1l4",
-
-    "title": "mkdir",
-
-    "description": "...",
-
-    "mission": {
-        ...
-    }
-}
-```
-
----
-
-# GET /health
-
-Simple health endpoint.
-
-Useful for frontend startup checks.
-
----
-
-## Response
+### Response
 
 ```json
 {
@@ -237,161 +313,75 @@ Useful for frontend startup checks.
 
 ---
 
-# Terminal Lifecycle
-
-Every command follows the same sequence.
+# Authentication Flow
 
 ```text
-Frontend
+Register/Login
+        │
+        ▼
+Receive session token
+        │
+        ▼
+Store token
+(localStorage or sessionStorage)
+        │
+        ▼
+Include
 
-↓
+Authorization: Bearer <token>
 
-POST /terminal
-
-↓
-
-Backend parses command
-
-↓
-
-Backend executes command
-
-↓
-
-Filesystem updated
-
-↓
-
-Lesson validated
-
-↓
-
-Attempt recorded
-
-↓
-
-Lesson progressed
-
-↓
-
-JSON response
-
-↓
-
-Frontend renders response
+with every authenticated request
+        │
+        ▼
+Backend authenticates request
+        │
+        ▼
+Request executes
 ```
-
----
-
-# Response Fields
-
-## stdout
-
-Human-readable command output.
-
-Example
-
-```json
-{
-    "stdout": "hello world"
-}
-```
-
----
-
-## cwd
-
-Current working directory after command execution.
-
-Example
-
-```json
-{
-    "cwd": "/projects"
-}
-```
-
-Always update the terminal prompt using this value.
-
----
-
-## lesson
-
-Present only when lesson evaluation occurs.
-
-Fields:
-
-| Field     | Description                              |
-| --------- | ---------------------------------------- |
-| completed | Whether the current lesson was completed |
-| current   | Current lesson information               |
-| next      | Next lesson if progression occurred      |
 
 ---
 
 # HTTP Status Codes
 
-| Code | Meaning                              |
-| ---- | ------------------------------------ |
-| 200  | Request completed successfully       |
-| 400  | Invalid request or malformed command |
-| 401  | Authentication required              |
-| 404  | Requested resource not found         |
-| 500  | Internal server error                |
+| Code | Meaning |
+|------|---------|
+|200|Success|
+|400|Invalid request|
+|401|Authentication failed|
+|404|Resource not found|
+|405|Method not allowed|
+|500|Internal server error|
 
 ---
 
-# Error Handling
+# API Principles
 
-The backend returns human-readable messages whenever possible.
+Carbon intentionally exposes a minimal API.
 
-Examples:
+The backend is the single source of truth for:
 
-```
-Unknown command.
+- authentication
+- terminal semantics
+- filesystem state
+- lesson validation
+- lesson progression
+- persistence
 
-No such file or directory.
-
-Directory already exists.
-
-File already exists.
-
-Directory not empty.
-
-Cannot remove directory with rm.
-
-Cannot read a directory.
-```
-
-The frontend should display these messages directly.
+The frontend should never duplicate backend logic.
 
 ---
 
-# Frontend Responsibilities
+# Future Endpoints
 
-The frontend should:
+The current API is intentionally small.
 
-* execute terminal requests
-* display stdout
-* update cwd
-* update lesson UI
-* render lesson content
-* render documentation
-* maintain terminal history
+Future additions may include:
 
-The frontend should **not**:
+- logout
+- command history
+- filesystem metadata
+- achievements
+- user statistics
+- WebSocket terminal sessions
 
-* validate commands
-* determine lesson completion
-* manipulate filesystem state
-* update lesson progress
-* infer terminal semantics
-
----
-
-# API Stability
-
-The API is designed around stable contracts.
-
-Future additions may introduce new endpoints or response fields, but existing endpoint behavior should remain backwards compatible whenever possible.
-
+These additions should extend the existing API without breaking compatibility.

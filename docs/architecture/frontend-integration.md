@@ -4,19 +4,71 @@
 >
 > **Audience:** Frontend Developers
 >
-> **Applies to:** Carbon Frontend + Backend Integration
+> **Project:** Carbon
+>
+> **Version:** v1 (Buildathon)
 
 ---
 
 # Overview
 
-Carbon follows a clear separation of responsibilities between the frontend and backend.
+Carbon follows a strict separation between the frontend and backend.
 
-The backend is responsible for command execution, lesson progression, persistence, authentication, and virtual filesystem management.
+The backend owns all application logic.
 
-The frontend is responsible for rendering the user interface and presenting backend data to the learner.
+The frontend is responsible only for rendering the user interface and communicating with the backend through the HTTP API.
 
-The frontend **does not implement terminal semantics**.
+The frontend must never duplicate backend logic.
+
+---
+
+# Responsibility Split
+
+## Frontend Responsibilities
+
+The frontend is responsible for:
+
+- Authentication UI
+- Hero page
+- Terminal interface
+- Cursor handling
+- Keyboard input
+- Rendering command output
+- Lesson interface
+- Documentation viewer
+- Mascot interface
+- Progress indicators
+- Theme management
+- Navigation
+- Animations
+
+The frontend should **never**:
+
+- execute terminal commands
+- parse commands
+- validate lessons
+- determine lesson completion
+- manage filesystem state
+- modify lesson progression
+- interpret terminal semantics
+
+---
+
+## Backend Responsibilities
+
+The backend is responsible for:
+
+- Authentication
+- Session management
+- Command parsing
+- Command execution
+- Virtual filesystem
+- Lesson validation
+- Lesson progression
+- Persistence
+- Business logic
+
+The backend is the single source of truth.
 
 ---
 
@@ -25,139 +77,157 @@ The frontend **does not implement terminal semantics**.
 ```text
                 Browser
 
-        ┌──────────────────────┐
-        │                      │
-        │      React App       │
-        │                      │
-        └──────────┬───────────┘
-                   │
-           HTTP JSON API
-                   │
-                   ▼
-        ┌──────────────────────┐
-        │                      │
-        │   Carbon Backend     │
-        │                      │
-        └──────┬───────────────┘
+        React + TypeScript
                │
-        ┌──────┴──────────┐
-        ▼                 ▼
- Filesystem Service   Lesson Runtime
-        │                 │
-        └────────┬────────┘
-                 ▼
-              SQLite
+               ▼
+        HTTP JSON API
+               │
+               ▼
+        Carbon Backend
+               │
+     ┌─────────┴─────────┐
+     ▼                   ▼
+Filesystem         Lesson Runtime
+     │                   │
+     └─────────┬─────────┘
+               ▼
+            SQLite
 ```
 
 ---
 
-# Responsibility Split
+# Authentication Flow
 
-## Frontend
+Authentication uses **server-side session tokens**.
 
-The frontend is responsible for:
+## Register
 
-* Terminal UI
-* Cursor handling
-* Keyboard input
-* Rendering command output
-* Lesson UI
-* Mascot UI
-* Documentation rendering
-* Animations
-* Progress indicators
-* Theme management
+```
+POST /auth/register
+```
 
-The frontend should never:
+↓
 
-* execute commands
-* validate lessons
-* manipulate lesson progress
-* implement filesystem logic
-* determine command correctness
+Returns
+
+```json
+{
+    "success": true,
+    "token": "<session-token>"
+}
+```
 
 ---
 
-## Backend
+## Login
 
-The backend is responsible for:
+```
+POST /auth/login
+```
 
-* Parsing commands
-* Executing commands
-* Managing terminal sessions
-* Managing the virtual filesystem
-* Lesson validation
-* Lesson progression
-* Authentication
-* Database persistence
+↓
+
+Returns
+
+```json
+{
+    "success": true,
+    "token": "<session-token>"
+}
+```
 
 ---
 
-# Static Content
+## Store Token
 
-The frontend reads educational content directly from the project.
+After login or registration, store the returned session token.
+
+Example:
 
 ```text
-content/
-
-├── docs/
-│
-├── lessons/
-│
-├── mascot/
-│
-└── assets/
+localStorage["token"] = token
 ```
 
-These files are **not served through the backend API**.
+or
 
-Reasons:
+```text
+sessionStorage["token"] = token
+```
 
-* Faster development
-* No unnecessary API endpoints
-* Easier content editing
-* Backend remains focused on business logic
+The frontend decides which storage strategy is appropriate.
+
+---
+
+## Authenticated Requests
+
+Every authenticated request must include:
+
+```
+Authorization: Bearer <token>
+```
+
+Example:
+
+```
+Authorization: Bearer
+8d22d3d7-a2b8-4d9b-b8aa-7f66b13db97d
+```
+
+---
+
+## Current User
+
+Immediately after authentication, fetch:
+
+```
+GET /auth/me
+```
+
+The response contains the authenticated user.
+
+Example:
+
+```json
+{
+    "id": "...",
+    "username": "alice"
+}
+```
+
+The frontend should use this information wherever the current user is displayed.
 
 ---
 
 # Terminal Flow
 
-Every command follows the same lifecycle.
+Every terminal command follows the same lifecycle.
 
 ```text
 User types command
-
-↓
-
+        │
+        ▼
 POST /terminal
-
-↓
-
+        │
+        ▼
 Backend parses command
-
-↓
-
-Backend executes command
-
-↓
-
+        │
+        ▼
+Command executed
+        │
+        ▼
 Filesystem updated
-
-↓
-
+        │
+        ▼
 Lesson validated
-
-↓
-
-Lesson progress updated
-
-↓
-
+        │
+        ▼
+Progress updated
+        │
+        ▼
 Response returned
-
-↓
-
-Frontend renders output
+        │
+        ▼
+Frontend updates UI
 ```
 
 ---
@@ -168,7 +238,13 @@ Frontend renders output
 POST /terminal
 ```
 
-Request
+Headers
+
+```
+Authorization: Bearer <token>
+```
+
+Body
 
 ```json
 {
@@ -183,56 +259,22 @@ Request
 ```json
 {
     "stdout": "",
-    "cwd": "/",
-
+    "cwd": "/home",
     "lesson": {
         "completed": true,
-
-        "current": {
-            ...
-        },
-
-        "next": {
-            ...
-        }
+        "current": { },
+        "next": { }
     }
 }
 ```
 
 The frontend should always trust the backend response.
 
-Do not attempt to determine whether a lesson was completed.
-
 ---
 
-# Lesson Rendering
+# Current Working Directory
 
-The frontend receives lesson information from the backend.
-
-It is responsible for displaying:
-
-* title
-* description
-* objectives
-* hints
-* rewards
-* completion state
-
-The backend decides:
-
-* whether the lesson passed
-* when progression occurs
-* what the next lesson is
-
----
-
-# Filesystem
-
-The frontend never stores filesystem state.
-
-Whenever the user executes a command, the backend becomes the single source of truth.
-
-Current working directory is returned after every command.
+The backend returns the updated working directory after every command.
 
 Example:
 
@@ -242,62 +284,177 @@ Example:
 }
 ```
 
-The prompt should update accordingly.
+The terminal prompt should always display this value.
 
----
-
-# Error Handling
-
-The backend returns human-readable error messages.
-
-Examples:
-
-```text
-No such file or directory.
-
-Directory not empty.
-
-File already exists.
-
-Unknown command.
-```
-
-The frontend should display these messages without modification.
+Never attempt to compute the current directory on the frontend.
 
 ---
 
 # Lesson Progress
 
-The frontend should never infer lesson completion.
+Lesson progression is completely backend-driven.
 
-Instead, it should use the returned lesson information.
+After every terminal command, the backend may return updated lesson information.
 
 Example:
 
-```text
-lesson.completed == true
+```json
+{
+    "lesson": {
+        "completed": true,
+        "current": { ... },
+        "next": { ... }
+    }
+}
 ```
 
-This indicates that the backend has already:
+The frontend should:
 
-* validated the lesson
-* recorded the attempt
-* updated progress
-* advanced to the next lesson (if applicable)
+- display completion
+- update lesson UI
+- transition to the next lesson
+
+The frontend should never determine whether a lesson passed.
 
 ---
 
-# Authentication
+# Documentation
 
-Authentication is handled entirely by the backend.
+Educational documentation is **not** served through the backend.
 
-The frontend should simply:
+Instead, the frontend reads documentation directly from:
 
-* log in
-* store the JWT
-* send the JWT with authenticated requests
+```text
+content/docs/
+```
 
-Authorization decisions are never made on the frontend.
+Advantages:
+
+- no unnecessary API
+- easier editing
+- instant updates during development
+- backend remains focused on business logic
+
+---
+
+# Lesson Content
+
+Lesson definitions are also stored in:
+
+```text
+content/lessons/
+```
+
+The backend loads these files during startup.
+
+The frontend should treat lesson files as content only and rely on the backend for runtime state.
+
+---
+
+# Glossary
+
+Beginner terminology is located in:
+
+```text
+content/glossary/
+```
+
+The frontend may load glossary entries directly.
+
+---
+
+# Mascot
+
+Mux dialogue is stored under:
+
+```text
+content/mascot/
+```
+
+The mascot is entirely frontend-driven.
+
+The backend has no knowledge of mascot conversations.
+
+---
+
+# Theme System
+
+Themes are entirely a frontend concern.
+
+The backend should never receive theme information.
+
+Changing themes must not affect API behavior.
+
+---
+
+# Error Handling
+
+Display backend error messages exactly as returned.
+
+Examples include:
+
+```text
+Unknown command
+
+No such file or directory
+
+Directory not empty
+
+File already exists
+
+Not a directory
+
+Not a file
+```
+
+Avoid rewriting backend messages.
+
+---
+
+# Initial Application Flow
+
+```text
+Open application
+        │
+        ▼
+Display hero page
+        │
+        ▼
+Register or Login
+        │
+        ▼
+Store session token
+        │
+        ▼
+GET /auth/me
+        │
+        ▼
+Load terminal interface
+        │
+        ▼
+GET /lessons/current
+        │
+        ▼
+Load lesson UI
+        │
+        ▼
+User begins learning
+```
+
+---
+
+# Backend Endpoints
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| POST | `/auth/register` | Register a user |
+| POST | `/auth/login` | Login |
+| GET | `/auth/me` | Current authenticated user |
+| POST | `/terminal` | Execute terminal command |
+| GET | `/lessons` | List lessons |
+| GET | `/lessons/{id}` | Retrieve lesson |
+| GET | `/lessons/current` | Current lesson |
+| GET | `/health` | Health check |
 
 ---
 
@@ -305,43 +462,41 @@ Authorization decisions are never made on the frontend.
 
 The frontend should remain a presentation layer.
 
-Business logic belongs in the backend.
+The backend owns:
 
-This allows:
+- authentication
+- terminal semantics
+- virtual filesystem
+- lesson validation
+- lesson progression
+- persistence
 
-* consistent behaviour
-* easier testing
-* simpler maintenance
-* platform-independent execution
+The frontend owns:
+
+- user experience
+- rendering
+- interaction
+- accessibility
+- animation
+- presentation
+
+Maintaining this separation keeps the architecture modular, predictable, and easy to evolve.
 
 ---
 
-# Current Backend Endpoints
+# Future Improvements
 
-| Method | Endpoint           | Purpose                            |
-| ------ | ------------------ | ---------------------------------- |
-| POST   | `/terminal`        | Execute a terminal command         |
-| GET    | `/lessons`         | List all lessons                   |
-| GET    | `/lessons/{id}`    | Retrieve a lesson by ID            |
-| GET    | `/lessons/current` | Retrieve the user's current lesson |
-| GET    | `/health`          | Server health check                |
+The current architecture is designed to support future enhancements without changing the frontend/backend contract.
 
----
+Potential future additions include:
 
-# Future Integrations
-
-The architecture is designed to support future features without changing the frontend/backend contract.
-
-Potential additions include:
-
-* WebSocket terminal transport
-* Command history
-* Terminal autocomplete
-* Interactive lessons
-* Rich terminal output
-* Achievement system
-* XP and leveling
-* Multiplayer classrooms
+- logout endpoint
+- WebSocket terminal sessions
+- command history
+- terminal autocomplete
+- achievements
+- XP and progression
+- multiplayer classrooms
+- plugin support
 
 These features should extend the existing API rather than replace it.
-

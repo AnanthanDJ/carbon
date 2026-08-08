@@ -4,419 +4,314 @@
 >
 > **Audience:** Backend Developers
 >
-> **Database:** SQLite
+> **Project:** Carbon
+>
+> **Version:** v1 (Buildathon)
 
 ---
 
 # Overview
 
-Carbon stores all persistent application state in SQLite.
+Carbon uses SQLite as its primary datastore.
 
-The database is responsible for:
+The database stores persistent application state while all business logic remains inside the service layer.
 
-* user accounts
-* virtual filesystem
-* lesson progression
-* lesson history
+Current responsibilities include:
 
-Educational content such as lessons and documentation are **not** stored in the database. They are loaded from the `content/` directory during application startup.
+- user accounts
+- authentication sessions
+- virtual filesystem
+- lesson progression
+- lesson attempts
 
 ---
 
 # Entity Relationship Diagram
 
 ```text
-                    users
-                      │
-          ┌───────────┼────────────┐
-          │           │            │
-          ▼           ▼            ▼
-filesystem_nodes  lesson_progress  users_current_lesson
-          │
-          │
-          ▼
-lesson_attempts
+                  Users
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+   Sessions   Filesystem    Lesson Progress
+                                │
+                                ▼
+                         Lesson Attempts
 ```
+
+Each user owns their own filesystem, authentication sessions, and lesson progress.
 
 ---
 
 # Tables
 
-The current schema consists of five primary tables.
+Current schema consists of five primary tables.
 
-| Table                | Purpose                   |
-| -------------------- | ------------------------- |
-| users                | User accounts             |
-| filesystem_nodes     | Virtual filesystem        |
-| lesson_progress      | Lesson completion history |
-| lesson_attempts      | Validation history        |
-| users_current_lesson | Current active lesson     |
-
----
-
-# users
-
-Stores user accounts.
-
-```sql
-CREATE TABLE users (
-    id TEXT PRIMARY KEY,
-
-    username TEXT NOT NULL UNIQUE,
-
-    password_hash TEXT NOT NULL,
-
-    created_at TEXT NOT NULL
-);
+```
+users
+sessions
+filesystem_nodes
+lesson_progress
+lesson_attempts
 ```
 
 ---
+
+# Users
+
+Stores registered user accounts.
 
 ## Fields
 
-| Field         | Type | Description                |
-| ------------- | ---- | -------------------------- |
-| id            | TEXT | User UUID                  |
-| username      | TEXT | Unique username            |
-| password_hash | TEXT | Argon2 password hash       |
-| created_at    | TEXT | Account creation timestamp |
+| Column | Type | Description |
+|--------|------|-------------|
+| id | TEXT | UUID |
+| username | TEXT | Unique username |
+| password_hash | TEXT | Password hash |
+| created_at | TEXT | RFC3339 timestamp |
 
 ---
 
-# filesystem_nodes
+## Example
 
-Stores the virtual filesystem.
-
-Directories and files share the same table.
-
-```sql
-CREATE TABLE filesystem_nodes (
-    id TEXT PRIMARY KEY,
-
-    parent_id TEXT,
-
-    user_id TEXT NOT NULL,
-
-    name TEXT NOT NULL,
-
-    kind TEXT NOT NULL,
-
-    content TEXT
-);
+```text
+id            8bda...
+username      alice
+password_hash $argon2...
+created_at    2026-08-08T17:32:41Z
 ```
 
 ---
+
+# Sessions
+
+Stores active authentication sessions.
+
+Each successful login creates a new session.
 
 ## Fields
 
-| Field     | Description                          |
-| --------- | ------------------------------------ |
-| id        | Node UUID                            |
-| parent_id | Parent directory                     |
-| user_id   | Owner                                |
-| name      | File or directory name               |
-| kind      | file or directory                    |
-| content   | File contents (NULL for directories) |
-
----
-
-## Root Directory
-
-Every user owns a single root directory.
-
-```text
-/
-```
-
-The root directory has:
-
-```text
-parent_id = NULL
-```
-
----
-
-## Directory Tree
-
-Example:
-
-```text
-/
-
-├── home
-│   └── notes.txt
-│
-├── projects
-│
-└── hello.txt
-```
-
-Every node references its parent through `parent_id`.
-
----
-
-# lesson_progress
-
-Tracks completed lessons.
-
-```sql
-CREATE TABLE lesson_progress (
-    user_id TEXT NOT NULL,
-
-    lesson_id TEXT NOT NULL,
-
-    status TEXT NOT NULL DEFAULT 'in_progress',
-
-    started_at TEXT NOT NULL,
-
-    completed_at TEXT,
-
-    PRIMARY KEY (user_id, lesson_id)
-);
-```
-
----
-
-## Fields
-
-| Field        | Description          |
-| ------------ | -------------------- |
-| user_id      | User UUID            |
-| lesson_id    | Lesson identifier    |
-| status       | Current lesson state |
-| started_at   | Lesson start time    |
-| completed_at | Completion time      |
-
----
-
-## Status Values
-
-Current values:
-
-```text
-in_progress
-
-completed
-```
-
-Additional states may be introduced in future versions.
-
----
-
-# lesson_attempts
-
-Records every lesson validation attempt.
-
-```sql
-CREATE TABLE lesson_attempts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    user_id TEXT NOT NULL,
-
-    lesson_id TEXT NOT NULL,
-
-    command TEXT NOT NULL,
-
-    successful INTEGER NOT NULL,
-
-    created_at TEXT NOT NULL
-);
-```
-
----
-
-## Fields
-
-| Field      | Description        |
-| ---------- | ------------------ |
-| id         | Attempt identifier |
-| user_id    | User UUID          |
-| lesson_id  | Lesson identifier  |
-| command    | Executed command   |
-| successful | Validation result  |
-| created_at | Timestamp          |
+| Column | Type | Description |
+|--------|------|-------------|
+| token | TEXT | Session token |
+| user_id | TEXT | User UUID |
+| created_at | TEXT | RFC3339 timestamp |
 
 ---
 
 ## Purpose
 
-Attempt history allows the backend to:
+Session lookup is performed for every authenticated request.
 
-* record learner progress
-* collect analytics
-* inspect failures
-* support future replay features
+Workflow:
 
-Every validation attempt is stored, regardless of success.
+```text
+Authorization Header
+        │
+        ▼
+Session Lookup
+        │
+        ▼
+Authenticated User
+```
 
 ---
 
-# users_current_lesson
+# Filesystem Nodes
 
-Stores the learner's active lesson.
+Stores the virtual filesystem.
 
-```sql
-CREATE TABLE users_current_lesson (
-    user_id TEXT PRIMARY KEY,
+Each record represents either:
 
-    lesson_id TEXT NOT NULL,
-
-    updated_at TEXT NOT NULL
-);
-```
+- file
+- directory
 
 ---
 
 ## Fields
 
-| Field      | Description           |
-| ---------- | --------------------- |
-| user_id    | User UUID             |
-| lesson_id  | Active lesson         |
-| updated_at | Last change timestamp |
+| Column | Type | Description |
+|--------|------|-------------|
+| id | TEXT | UUID |
+| parent_id | TEXT | Parent node |
+| user_id | TEXT | Owner |
+| name | TEXT | Node name |
+| kind | TEXT | File or Directory |
+| content | TEXT | File contents |
 
 ---
 
-## Why Separate This Table?
+## Example Tree
 
-Although the current lesson could theoretically be derived from `lesson_progress`, maintaining a dedicated table provides:
+```text
+/
 
-* constant-time lookup
-* simpler queries
-* cleaner runtime logic
+└── home
+    ├── notes.txt
+    └── projects
+```
 
-This avoids scanning lesson history for every command execution.
+Internally this is represented through parent-child relationships.
 
 ---
 
-# Data Flow
+# Lesson Progress
 
-Typical lesson progression:
+Tracks the user's overall lesson progression.
 
-```text
-User executes command
+## Fields
 
-↓
-
-lesson_attempts
-(record validation)
-
-↓
-
-lesson_progress
-(mark completed)
-
-↓
-
-users_current_lesson
-(advance)
-```
+| Column | Type | Description |
+|--------|------|-------------|
+| user_id | TEXT | User UUID |
+| lesson_id | TEXT | Lesson identifier |
+| completed | INTEGER | Completion flag |
+| current | INTEGER | Current lesson flag |
+| started_at | TEXT | RFC3339 timestamp |
+| completed_at | TEXT | RFC3339 timestamp (nullable) |
 
 ---
 
-# Filesystem Flow
+## Purpose
 
-Filesystem operations update `filesystem_nodes`.
+Allows users to resume learning across sessions.
 
-Example:
+---
 
-```text
-mkdir projects
+# Lesson Attempts
 
-↓
+Records every lesson validation attempt.
 
-Insert directory node
+## Fields
 
-↓
-
-filesystem_nodes
-```
-
-Deleting a file:
-
-```text
-rm notes.txt
-
-↓
-
-Delete node
-
-↓
-
-filesystem_nodes
-```
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INTEGER | Primary key |
+| user_id | TEXT | User UUID |
+| lesson_id | TEXT | Lesson identifier |
+| command | TEXT | Executed command |
+| successful | INTEGER | Validation result |
+| attempted_at | TEXT | RFC3339 timestamp |
 
 ---
 
 # Relationships
 
 ```text
-users
-
-    │
-
-    ├──────────────► filesystem_nodes.user_id
-
-    │
-
-    ├──────────────► lesson_progress.user_id
-
-    │
-
-    ├──────────────► lesson_attempts.user_id
-
-    │
-
-    └──────────────► users_current_lesson.user_id
+User
+ │
+ ├── Sessions
+ │
+ ├── Filesystem Nodes
+ │
+ ├── Lesson Progress
+ │
+ └── Lesson Attempts
 ```
 
-Lesson identifiers reference lesson YAML files by their `id` field rather than a separate database table.
+All user-owned records reference the user's UUID.
 
 ---
 
-# Design Decisions
+# Identifiers
 
-The schema follows several principles:
+Carbon uses UUIDs for persistent identifiers.
 
-* UUIDs for stable identifiers
-* One table for both files and directories
-* Immutable lesson definitions stored outside the database
-* Repository abstraction between application logic and SQLite
-* Simple schema optimized for readability and maintainability
+Examples:
+
+```text
+7dca4ec0-f2d3-4f26-98fb-5737b5a0d2d4
+```
+
+UUIDs are used for:
+
+- users
+- filesystem nodes
+- session tokens
+
+Lesson identifiers are defined by lesson content.
 
 ---
 
-# Future Extensions
+# Persistence Flow
 
-Potential future additions include:
-
-## achievements
+Typical request lifecycle:
 
 ```text
-Store unlocked achievements.
+HTTP Request
+      │
+      ▼
+Route
+      │
+      ▼
+Service
+      │
+      ▼
+Repository
+      │
+      ▼
+SQLite
+      │
+      ▼
+Response
 ```
 
-## user_settings
+The database is accessed only through repositories.
+
+---
+
+# Design Principles
+
+## Service-Oriented
+
+Business logic never appears inside SQL queries.
+
+---
+
+## Repository-Based
+
+Services depend on repository traits rather than SQLite directly.
+
+---
+
+## User Isolation
+
+Every user-owned table includes a `user_id`.
+
+Queries are scoped to the authenticated user.
+
+---
+
+## Content Separation
+
+Educational content is not stored in the database.
+
+Instead:
 
 ```text
-Theme
+content/
 
-Accessibility
-
-Editor preferences
+├── lessons/
+├── docs/
+├── glossary/
+└── mascot/
 ```
 
-## command_history
+SQLite stores only runtime state.
 
-```text
-Persistent terminal history.
-```
+---
 
-## lesson_checkpoints
+# Future Improvements
 
-```text
-Support resumable lessons.
-```
+Potential schema additions include:
 
-These additions can be introduced without modifying the existing tables or breaking current functionality.
+- command history
+- bookmarks
+- achievements
+- user preferences
+- lesson analytics
+- audit logs
+- filesystem metadata
+- multiple active terminals
 
+These additions should extend the schema without changing the existing relationships.

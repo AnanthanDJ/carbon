@@ -71,6 +71,16 @@ Responsible for:
 
 ---
 
+## Session Management
+
+UserRepository is also responsible for:
+
+* creating sessions
+* looking up sessions
+* authenticating session tokens
+
+---
+
 # Why Repository Traits?
 
 Repository traits allow:

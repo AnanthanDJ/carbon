@@ -1,0 +1,15 @@
+{
+  "command": "pwd",
+  "dialogue": {
+    "intro": [
+      "Sometimes you need to know where you are.",
+      "The terminal has a command for that."
+    ],
+
+    "hint1": ["It is only three letters long."],
+
+    "hint2": ["It stands for 'Print Working Directory'."],
+
+    "success": ["Exactly.", "Now you always know where you are."]
+  }
+}

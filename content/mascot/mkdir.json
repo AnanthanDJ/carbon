@@ -1,0 +1,19 @@
+{
+  "command": "mkdir",
+  "dialogue": {
+    "intro": [
+      "Directories help organize your files.",
+      "Let's create your first one."
+    ],
+
+    "hint1": ["There is a command that starts with 'mk'."],
+
+    "hint2": ["Its full name is 'mkdir'."],
+
+    "hint3": ["Try:", "mkdir projects"],
+
+    "success": ["Nice!", "You just created your first directory."],
+
+    "after": ["You can enter it using 'cd'."]
+  }
+}

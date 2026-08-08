@@ -4,59 +4,61 @@
 >
 > **Audience:** Backend Developers
 >
-> **Project:** Carbon Server
+> **Project:** Carbon
+>
+> **Version:** v1 (Buildathon)
 
 ---
 
 # Overview
 
-The Carbon backend is responsible for executing terminal commands, managing the virtual filesystem, validating lessons, tracking user progression, and persisting application state.
+The Carbon backend provides the application's business logic.
 
-The backend intentionally contains **all business logic**, while the frontend acts purely as a presentation layer.
+It is responsible for:
 
-The architecture follows a layered design centered around services and repository abstractions, allowing core logic to remain independent of the underlying database.
+- Authentication
+- Session management
+- Virtual filesystem
+- Terminal execution
+- Lesson runtime
+- Persistence
+
+The backend intentionally contains **all application logic** while remaining independent of the frontend.
 
 ---
 
 # High-Level Architecture
 
 ```text
-                    HTTP Requests
-                          │
-                          ▼
-                     Axum Router
-                          │
-                          ▼
-                      Route Layer
-                          │
-                          ▼
-                    Service Layer
-          ┌───────────┼─────────────┐
-          ▼           ▼             ▼
-     AuthService FilesystemService LessonRuntimeService
-                          │
-                          ▼
-                  Repository Traits
-                          │
-                          ▼
-               SQLite Repository Layer
-                          │
-                          ▼
-                       SQLite
+                    HTTP API
+                        │
+                Axum Route Handlers
+                        │
+                        ▼
+                  Service Layer
+        ┌────────────┼────────────┐
+        ▼            ▼            ▼
+ Authentication  Filesystem   Lesson Runtime
+        │            │            │
+        └────────────┼────────────┘
+                     ▼
+             Repository Layer
+                     │
+                     ▼
+                  SQLite
 ```
 
 ---
 
 # Project Structure
 
-```text
-apps/server
-│
+```
+apps/server/
+
 ├── app/
 │   ├── config.rs
-│   ├── router.rs
 │   ├── state.rs
-│   └── startup.rs
+│   └── mod.rs
 │
 ├── auth/
 │
@@ -64,355 +66,360 @@ apps/server
 │
 ├── lesson/
 │
-├── models/
-│
 ├── repository/
 │
 ├── routes/
 │
-├── terminal/
+├── models/
 │
 └── main.rs
 ```
 
----
-
-# Architectural Layers
-
-## Route Layer
-
-The route layer exposes the HTTP API.
-
-Responsibilities:
-
-* deserialize requests
-* invoke services
-* serialize responses
-* return HTTP status codes
-
-Routes should contain minimal business logic.
-
----
-
-## Service Layer
-
-The service layer contains the application's business logic.
-
-Current services include:
-
-* AuthService
-* FilesystemService
-* LessonService
-* LessonRuntimeService
-
-Services coordinate repositories but remain independent of SQLite.
-
----
-
-## Repository Layer
-
-Repositories abstract persistence.
-
-Business logic communicates only with repository traits.
-
-Example:
-
-```text
-FilesystemService
-
-↓
-
-FilesystemRepository
-
-↓
-
-SqliteFilesystemRepository
-```
-
-This separation allows storage implementations to be replaced without affecting application logic.
-
----
-
-## Model Layer
-
-Models represent the application's core domain objects.
-
-Examples include:
-
-* User
-* FilesystemNode
-* LessonProgress
-* LessonAttempt
-* TerminalSession
-
-Models remain storage-agnostic whenever possible.
-
----
-
-# Major Components
-
-## Authentication
-
-Responsible for:
-
-* registration
-* login
-* password hashing
-* JWT generation
-* user initialization
-
-Passwords are stored using Argon2.
-
----
-
-## Terminal
-
-The terminal subsystem handles:
-
-* command parsing
-* command dispatch
-* session management
-* command execution
-
-The terminal does **not** determine lesson progression.
-
----
-
-## Virtual Filesystem
-
-The virtual filesystem provides an isolated Unix-like environment for each user.
-
-Supported operations include:
-
-* pwd
-* ls
-* cd
-* mkdir
-* touch
-* cat
-* rm
-* rmdir
-
-Filesystem state is stored in SQLite.
-
----
-
-## Lesson System
-
-Lessons are loaded from the filesystem during startup.
-
-```text
-content/lessons
-
-↓
-
-LessonLoader
-
-↓
-
-LessonRegistry
-
-↓
-
-LessonService
-```
-
-Lessons remain immutable during runtime.
-
----
-
-## Lesson Runtime
-
-The runtime validates learner actions after command execution.
-
-Responsibilities:
-
-* retrieve current lesson
-* validate command
-* record attempt
-* update progress
-* advance learner
-
-The runtime never executes commands itself.
+Each module has a single responsibility.
 
 ---
 
 # Request Lifecycle
 
-A typical terminal request follows this sequence.
+Every request follows the same pipeline.
 
 ```text
-Client
+HTTP Request
+      │
+      ▼
+Route Handler
+      │
+      ▼
+Authentication (if required)
+      │
+      ▼
+Service Layer
+      │
+      ▼
+Repository Layer
+      │
+      ▼
+SQLite
+      │
+      ▼
+JSON Response
+```
 
-↓
+Business logic never exists inside route handlers.
 
-POST /terminal
+---
 
-↓
+# AppState
 
-Route
+Application-wide services are created once during startup and shared through `AppState`.
 
-↓
+Current services include:
 
-Command Parser
+- Configuration
+- SQLite pool
+- Authentication service
+- Filesystem service
+- Lesson service
+- Lesson runtime service
 
-↓
+Routes access these services through Axum's shared state.
 
-Command Dispatcher
+---
 
-↓
+# Service Layer
 
+The service layer contains all business logic.
+
+Current services include:
+
+## Authentication Service
+
+Responsible for:
+
+- user registration
+- login
+- session creation
+- authentication
+- current user lookup
+
+---
+
+## Filesystem Service
+
+Responsible for:
+
+- path resolution
+- file creation
+- directory creation
+- deletion
+- navigation
+- file reading
+
+The filesystem is completely virtual and isolated per user.
+
+---
+
+## Lesson Service
+
+Responsible for:
+
+- loading lesson definitions
+- indexing lessons
+- exposing lesson metadata
+
+Lesson definitions are loaded during application startup.
+
+---
+
+## Lesson Runtime Service
+
+Responsible for:
+
+- validating commands
+- tracking attempts
+- recording progress
+- advancing lessons
+- interacting with the filesystem
+
+The runtime is executed after terminal commands whenever lesson validation is required.
+
+---
+
+# Repository Layer
+
+Repositories abstract database access.
+
+Services never communicate with SQLite directly.
+
+Current repositories include:
+
+```
+UserRepository
+
+FilesystemRepository
+
+LessonRepository
+```
+
+SQLite implementations satisfy these interfaces.
+
+This separation allows services to remain storage-independent.
+
+---
+
+# Authentication
+
+Carbon currently uses **server-side session tokens**.
+
+Workflow:
+
+```text
+Register/Login
+        │
+        ▼
+Session created
+        │
+        ▼
+Random token generated
+        │
+        ▼
+Stored in SQLite
+        │
+        ▼
+Returned to client
+```
+
+Authenticated requests include:
+
+```
+Authorization: Bearer <token>
+```
+
+The backend authenticates every protected request before executing business logic.
+
+---
+
+# Terminal Execution
+
+Terminal commands are processed through a dedicated execution pipeline.
+
+```text
+Command
+    │
+    ▼
+Parser
+    │
+    ▼
+Dispatcher
+    │
+    ▼
 Filesystem Service
-
-↓
-
+    │
+    ▼
 Lesson Runtime
-
-↓
-
-Repositories
-
-↓
-
-SQLite
-
-↓
-
-Response
+    │
+    ▼
+Terminal Response
 ```
 
+Each command executes against the authenticated user's virtual filesystem.
+
 ---
 
-# Dependency Flow
+# Virtual Filesystem
 
-Dependencies flow in one direction.
+Every registered user receives an isolated filesystem.
 
-```text
-Routes
+Example:
 
-↓
+```
+/
 
-Services
-
-↓
-
-Repositories
-
-↓
-
-SQLite
+└── home
 ```
 
-Lower layers never depend on higher layers.
+Operations performed by one user never affect another user's filesystem.
 
-For example:
-
-* repositories never call services
-* services never call routes
-* models never depend on Axum
-
-This keeps the architecture modular and testable.
+Filesystem state is persisted in SQLite.
 
 ---
 
-# State Management
+# Lesson Runtime
 
-Application-wide state is stored in `AppState`.
+Lesson progression is backend-controlled.
 
-Current state includes:
-
-* configuration
-* database pool
-* authentication service
-* filesystem service
-* lesson service
-* lesson runtime
-
-All services are initialized once during application startup and shared across requests.
-
----
-
-# Content Loading
-
-Static educational content is loaded during startup.
+After each terminal command:
 
 ```text
+Command executed
+        │
+        ▼
+Lesson validation
+        │
+        ▼
+Attempt recorded
+        │
+        ▼
+Progress updated
+        │
+        ▼
+Next lesson unlocked
+```
+
+The frontend simply renders the returned lesson state.
+
+---
+
+# Content
+
+Educational content is separated from business logic.
+
+```
 content/
 
 ├── lessons/
-
 ├── docs/
-
-├── mascot/
-
-└── assets/
+├── glossary/
+└── mascot/
 ```
 
-Only lesson definitions are consumed by the backend.
+Current responsibilities:
 
-Documentation and UI assets are intended for direct frontend consumption.
+| Directory | Consumer |
+|-----------|----------|
+| lessons | Backend |
+| docs | Frontend |
+| glossary | Frontend |
+| mascot | Frontend |
+
+This keeps educational content editable without modifying backend code.
+
+---
+
+# Database
+
+SQLite stores:
+
+- users
+- sessions
+- filesystem nodes
+- lesson progress
+- lesson attempts
+
+Repositories are responsible for translating between database rows and domain models.
 
 ---
 
 # Error Handling
 
-Errors propagate through the service layer using `anyhow::Result`.
+Services return domain errors.
 
-Domain-specific failures (such as invalid paths or missing files) are represented by custom error types and converted into appropriate HTTP responses.
+Routes convert these into appropriate HTTP status codes.
+
+Typical responses include:
+
+- 400 Bad Request
+- 401 Unauthorized
+- 404 Not Found
+- 500 Internal Server Error
+
+This keeps HTTP concerns separate from business logic.
 
 ---
 
 # Design Principles
 
-The backend follows several architectural principles:
+The backend follows several architectural principles.
 
-### Separation of Concerns
+## Separation of Concerns
 
-Each subsystem has a clearly defined responsibility.
+Routes handle HTTP.
 
-### Repository Pattern
+Services contain business logic.
 
-Persistence remains independent of business logic.
-
-### Immutable Lesson Content
-
-Lesson definitions are loaded once and never modified at runtime.
-
-### Stateless HTTP Layer
-
-Routes perform request handling only.
-
-Application state lives within services and the database.
-
-### Backend as Source of Truth
-
-The backend owns:
-
-* terminal semantics
-* filesystem state
-* lesson progression
-* validation
-* persistence
-
-The frontend renders backend state without duplicating business logic.
+Repositories handle persistence.
 
 ---
 
-# Future Evolution
+## Dependency Inversion
 
-The architecture is designed to accommodate future enhancements without significant restructuring.
+Business logic depends on repository traits rather than concrete SQLite implementations.
 
-Potential additions include:
+---
 
-* WebSocket terminal sessions
-* Command history
-* Terminal autocompletion
-* Achievement system
-* Leaderboards
-* Multiplayer classrooms
-* Additional repository implementations (e.g., PostgreSQL)
-* Filesystem snapshots
-* Plugin-based command extensions
+## Single Responsibility
 
-These features can be added by extending the service layer while preserving the existing architecture and API contracts.
+Each module has one clearly defined responsibility.
 
+---
+
+## Stateless HTTP
+
+Authentication state is stored in server-side sessions.
+
+Each request contains the information required for authentication.
+
+---
+
+## Content-Driven Learning
+
+Lessons are defined as content rather than compiled into application logic.
+
+This allows lesson updates without modifying the execution engine.
+
+---
+
+# Future Improvements
+
+Potential future enhancements include:
+
+- JWT authentication
+- Logout endpoint
+- Session expiration
+- Middleware-based authentication
+- Command history
+- WebSocket terminal sessions
+- Multi-device session management
+- Additional repository implementations
+
+These improvements should extend the current architecture without changing the existing service boundaries.

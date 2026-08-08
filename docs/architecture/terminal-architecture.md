@@ -138,7 +138,7 @@ Current fields:
 
 * stdout
 
-Additional metadata (such as cwd and lesson state) is added by higher layers before being returned to the frontend.
+Additional metadata such as the current working directory and lesson state are added by the route layer before being returned to the frontend
 
 ---
 

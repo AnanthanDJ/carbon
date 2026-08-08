@@ -2,421 +2,373 @@
 
 > **Status:** Active
 >
-> **Audience:** Lesson Authors & Backend Developers
+> **Audience:** Content Authors
 >
-> **Applies to:** `content/lessons`
+> **Project:** Carbon
+>
+> **Version:** v1 (Buildathon)
 
 ---
 
 # Overview
 
-Lessons define the educational content of Carbon.
+Lessons are defined as content rather than application code.
 
-Each lesson is represented as a YAML file describing:
+This allows new lessons to be added, modified, or reorganized without changing the backend.
 
-* lesson metadata
-* learning objectives
-* expected user actions
-* validation rules
-* rewards
-* hints
-
-Lessons are immutable content files loaded during backend startup.
+The lesson runtime loads lesson definitions during application startup and validates user actions against them.
 
 ---
 
-# Directory Structure
+# Design Goals
+
+Lessons should be:
+
+- beginner-friendly
+- incremental
+- interactive
+- deterministic
+- documentation-driven
+
+A lesson should teach **one concept at a time**.
+
+---
+
+# Content Location
+
+All lesson definitions are stored under:
 
 ```text
 content/
-
 └── lessons/
-    ├── chapter1/
-    │   ├── c1l1.yaml
-    │   ├── c1l2.yaml
-    │   └── ...
-    │
-    ├── chapter2/
-    │
-    └── ...
 ```
 
-Each lesson should exist as its own YAML file.
+The backend loads every lesson in this directory during startup.
 
 ---
 
-# Loading
-
-All lesson files are loaded during application startup.
+# Lesson Lifecycle
 
 ```text
-Backend Startup
-
-↓
-
-LessonLoader
-
-↓
-
-LessonRegistry
-
-↓
-
-LessonService
-
-↓
-
-LessonRuntime
+Lesson Definition
+        │
+        ▼
+Loaded at startup
+        │
+        ▼
+Indexed
+        │
+        ▼
+Presented to user
+        │
+        ▼
+Terminal interaction
+        │
+        ▼
+Validation
+        │
+        ▼
+Progress recorded
+        │
+        ▼
+Next lesson unlocked
 ```
 
-Once loaded, lessons are treated as read-only.
+The frontend never validates lesson completion.
 
 ---
 
 # Lesson Structure
 
-Example:
+Each lesson should define:
 
-```yaml
-id: c1l1
+- unique identifier
+- title
+- objective
+- description
+- expected command or validation rule
+- hints
+- documentation references
+- next lesson (if applicable)
 
-title: Hello Terminal
-
-description: >
-  Learn your first terminal command.
-
-chapter: 1
-
-order: 1
-
-mission:
-  description: Print "Hello, Terminal!"
-
-  validator:
-    type: exact_command
-    command: echo "Hello, Terminal!"
-
-reward:
-  xp: 10
-
-hints:
-  - Remember that echo prints text.
-```
+A lesson represents a single learning objective.
 
 ---
 
-# Required Fields
+# Lesson Principles
 
-| Field       | Description                        |
-| ----------- | ---------------------------------- |
-| id          | Unique lesson identifier           |
-| title       | Lesson title                       |
-| description | Lesson description                 |
-| chapter     | Chapter number                     |
-| order       | Lesson ordering within the chapter |
-| mission     | Learning objective                 |
-| reward      | Lesson reward                      |
+Every lesson should introduce only one new concept.
+
+Good examples:
+
+- printing text
+- current directory
+- listing files
+- creating directories
+- reading files
+
+Avoid combining multiple unrelated concepts into a single lesson.
 
 ---
 
-# Lesson ID
+# Validation
 
-Lesson IDs should remain stable.
+Lesson completion is determined entirely by the backend.
 
-Recommended format:
+Typical validation process:
 
 ```text
-c1l1
-
-c1l2
-
-c1l3
-
-c2l1
+User executes command
+        │
+        ▼
+Terminal execution
+        │
+        ▼
+Lesson runtime
+        │
+        ▼
+Validation
+        │
+        ▼
+Success or failure
 ```
 
-Pattern:
+Validation may depend on:
 
-```text
-c<chapter>l<lesson>
-```
+- command name
+- command arguments
+- filesystem state
+- command result
 
-Examples
-
-```text
-c1l4
-
-c2l8
-
-c4l12
-```
-
----
-
-# Mission
-
-A mission describes what the learner must accomplish.
-
-Example
-
-```yaml
-mission:
-  description: Create a directory named projects.
-```
-
-Each lesson contains exactly one mission.
-
----
-
-# Validators
-
-The validator determines whether the learner has successfully completed the lesson.
-
-Every lesson contains exactly one validator.
-
----
-
-## Exact Command
-
-Requires the learner to execute a specific command.
-
-```yaml
-validator:
-  type: exact_command
-
-  command: pwd
-```
-
----
-
-## Expected Output
-
-Requires command output to exactly match.
-
-```yaml
-validator:
-  type: expected_output
-
-  output: Hello
-```
-
----
-
-## Current Directory
-
-Requires the learner to be inside a specific directory.
-
-```yaml
-validator:
-  type: current_directory
-
-  path: /projects
-```
-
----
-
-## File Exists
-
-Succeeds when the specified file exists.
-
-```yaml
-validator:
-  type: file_exists
-
-  path: hello.txt
-```
-
----
-
-## Directory Exists
-
-Succeeds when the specified directory exists.
-
-```yaml
-validator:
-  type: directory_exists
-
-  path: projects
-```
-
----
-
-## File Contains
-
-Succeeds when a file contains the expected text.
-
-```yaml
-validator:
-  type: file_contains
-
-  path: hello.txt
-
-  text: Hello, Carbon!
-```
-
----
-
-# Rewards
-
-Rewards are granted upon successful lesson completion.
-
-Current implementation:
-
-```yaml
-reward:
-  xp: 10
-```
-
-Future versions may include:
-
-```yaml
-reward:
-  xp: 10
-
-  badges:
-    - first-command
-
-  achievements:
-    - unix-beginner
-```
+The frontend should treat backend validation as authoritative.
 
 ---
 
 # Hints
 
-Hints assist learners without revealing the answer.
+Lessons may provide progressive hints.
 
-Example
+Hints should:
 
-```yaml
-hints:
-  - echo prints text to the terminal.
-  - Strings containing spaces should be wrapped in quotes.
-```
+- encourage experimentation
+- explain concepts
+- avoid revealing the full solution immediately
 
-Hints should gradually guide the learner.
-
----
-
-# Writing Guidelines
-
-Lessons should:
-
-* teach one concept
-* use real Unix terminology
-* avoid unnecessary complexity
-* build upon previous lessons
-
-A lesson should introduce exactly one new idea whenever possible.
-
----
-
-# Validation Philosophy
-
-Validators should verify learning outcomes rather than memorization.
-
-Good examples:
+Example progression:
 
 ```text
-Create a directory.
+Hint 1
 
-Navigate into it.
+Think about which command creates a directory.
 
-Print the current directory.
 
-Create a file.
+Hint 2
+
+The command begins with "mk..."
+
+
+Hint 3
+
+Try:
+
+mkdir projects
 ```
 
-Avoid combining unrelated objectives in a single lesson.
+Hints should become increasingly specific.
+
+---
+
+# Documentation References
+
+Lessons should reference relevant documentation.
+
+Example:
+
+```text
+Related Documentation
+
+mkdir
+filesystem
+paths
+```
+
+The frontend may use these references to open documentation from:
+
+```text
+content/docs/
+```
+
+This keeps lessons concise while encouraging exploration.
+
+---
+
+# Glossary References
+
+Lessons introducing new terminology should also reference glossary entries.
+
+Example:
+
+```text
+directory
+path
+working directory
+```
+
+Glossary content is stored under:
+
+```text
+content/glossary/
+```
+
+---
+
+# Learning Philosophy
+
+Carbon is documentation-first.
+
+Lessons should encourage users to consult documentation rather than memorize commands.
+
+A successful lesson should increase confidence, not simply test recall.
 
 ---
 
 # Lesson Progression
 
-Lessons are completed sequentially.
+Lessons are intended to be completed sequentially.
+
+Typical progression:
 
 ```text
-Lesson 1
+echo
 
 ↓
 
-Lesson 2
+pwd
 
 ↓
 
-Lesson 3
+ls
 
 ↓
 
-...
+cd
+
+↓
+
+mkdir
+
+↓
+
+touch
+
+↓
+
+cat
+
+↓
+
+rm
+
+↓
+
+rmdir
 ```
 
-The backend determines progression.
-
-Lesson files do not reference subsequent lessons directly.
+Each lesson builds upon concepts introduced earlier.
 
 ---
 
-# Best Practices
+# Attempt Recording
 
-* Keep lesson descriptions concise.
-* Use meaningful file and directory names.
-* Prefer realistic examples.
-* Introduce concepts incrementally.
-* Minimize ambiguity in objectives.
+Every validation attempt may be recorded by the backend.
 
----
+Information recorded can include:
 
-# Common Mistakes
+- lesson
+- executed command
+- success or failure
+- timestamp
 
-Avoid lessons that:
-
-* require multiple unrelated commands
-* depend on unspecified filesystem state
-* rely on implementation details
-* introduce several new concepts simultaneously
+This data is used to track learning progress and allow users to resume where they left off.
 
 ---
 
-# Future Extensions
+# Content Guidelines
 
-The lesson format is intentionally extensible.
+When writing lessons:
 
-Potential future additions include:
+✔ Introduce one concept.
 
-```yaml
-difficulty: beginner
+✔ Keep explanations concise.
 
-estimated_time: 3
+✔ Encourage experimentation.
 
-prerequisites:
-  - c1l2
+✔ Reference documentation.
 
-common_mistakes:
-  - message: "You forgot the quotes."
+✔ Provide progressive hints.
 
-mascot:
-  intro: "Let's learn echo!"
-  success: "Great job!"
-  failure: "Almost there."
+✔ Assume no prior terminal experience.
 
-resources:
-  - docs/echo.md
+Avoid:
+
+- long paragraphs
+- multiple objectives
+- hidden requirements
+- unexplained terminology
+
+---
+
+# Example Learning Flow
+
+```text
+Display lesson
+        │
+        ▼
+User reads objective
+        │
+        ▼
+User experiments
+        │
+        ▼
+Backend validates
+        │
+        ▼
+Lesson completed
+        │
+        ▼
+Next lesson begins
 ```
 
-These fields should remain optional so that existing lessons continue to work without modification.
+This interaction loop is the core learning model of Carbon.
 
 ---
 
 # Design Principles
 
-The lesson format should remain:
+Lessons should prioritize:
 
-* Human-readable
-* Version-controllable
-* Easy to author
-* Backend-independent
-* Extensible without breaking existing lessons
+1. Confidence over memorization.
+2. Experimentation over imitation.
+3. One concept at a time.
+4. Documentation before answers.
+5. Progressive guidance.
+6. Immediate feedback.
 
-Lesson content should describe **what** the learner needs to accomplish, while the backend is responsible for determining **whether** it has been accomplished.
+These principles should guide every lesson added to Carbon.
 
+---
+
+# Future Improvements
+
+Potential future enhancements include:
+
+- multiple validation strategies
+- optional challenges
+- branching lesson paths
+- achievements
+- lesson categories
+- difficulty levels
+- localization
+- instructor-authored lesson packs
+
+The lesson format should remain content-driven so new learning material can be added without modifying backend code.
