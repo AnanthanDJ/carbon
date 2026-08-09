@@ -48,8 +48,18 @@ where
     }
 
     pub async fn current(&self, user_id: String) -> Result<Option<Lesson>> {
-        let Some(id) = self.repository.current_lesson(user_id).await? else {
-            return Ok(None);
+        let id = match self.repository.current_lesson(user_id.clone()).await? {
+            Some(id) => id,
+            None => {
+                let binding = self.lessons.list();
+                let first = binding
+                    .first()
+                    .ok_or_else(|| anyhow::anyhow!("no lessons loaded"))?;
+
+                self.start(user_id.clone(), &first.id).await?;
+
+                first.id.clone()
+            }
         };
 
         Ok(self.lessons.get(&id).cloned())

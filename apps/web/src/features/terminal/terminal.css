@@ -10,6 +10,8 @@
   box-shadow: var(--shadow);
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   font-size: 0.9rem;
+  margin: 1%;
+  padding: 0;
 }
 .terminal__bar {
   display: flex;

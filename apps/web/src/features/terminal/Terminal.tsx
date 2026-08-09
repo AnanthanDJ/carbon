@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { TerminalLine, TerminalToken } from "../../data/mockData";
 import { terminalSeed } from "../../data/mockData";
-import { api, ApiError } from '../../api/client'
-import { useLearning } from '../lesson/LearningProvider'
-import { useAuth } from '../../auth/AuthProvider'
+import { api, ApiError } from "../../api/client";
+import { useLearning } from "../lesson/LearningProvider";
+import { useAuth } from "../../auth/AuthProvider";
 import "./terminal.css";
 
 const tokenize = (
@@ -25,7 +25,7 @@ export function Terminal() {
   const [lines, setLines] = useState<TerminalLine[]>(terminalSeed);
   const [input, setInput] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
-  const { cwd, setCwd, applyOutcome, refreshLesson } = useLearning()
+  const { cwd, setCwd, applyOutcome, refreshLesson } = useLearning();
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollbackRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
@@ -51,10 +51,10 @@ export function Terminal() {
     setIsExecuting(true);
 
     try {
-      const result = await api.execute(command, cwd)
+      const result = await api.execute(command, cwd);
       setCwd(result.cwd);
-      applyOutcome(result.lesson)
-      void refreshLesson()
+      applyOutcome(result.lesson);
+      void refreshLesson();
       if (command === "clear") {
         setLines([]);
       } else {
@@ -70,7 +70,12 @@ export function Terminal() {
         ]);
       }
     } catch (error) {
-      const message = error instanceof ApiError && error.status === 400 ? 'Command could not be completed.' : error instanceof Error ? error.message : "Unable to reach the terminal service.";
+      const message =
+        error instanceof ApiError && error.status === 400
+          ? "Command could not be completed."
+          : error instanceof Error
+            ? error.message
+            : "Unable to reach the terminal service.";
       setLines((current) => [
         ...current,
         commandLine,
@@ -91,7 +96,7 @@ export function Terminal() {
       <div className="terminal__bar">
         <span className="terminal__dot" />
         <span>
-          {user?.username ?? "guest"}@carbon: {cwd}
+          {user?.username ?? "guest"}@carbon: ~{cwd}
         </span>
         <span className="terminal__status">
           {isExecuting ? "running…" : "connected"}

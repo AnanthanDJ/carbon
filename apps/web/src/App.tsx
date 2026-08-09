@@ -302,61 +302,106 @@ function LessonPage() {
   if (!lesson) {
     return (
       <Page
-        title="All lessons completed"
-        subtitle="You're ready to explore Carbon on your own."
+        title="Lessons Complete"
+        subtitle="You've completed every lesson currently available."
       >
-        <div className="card">
-          <p>
-            You've completed every available lesson. Continue experimenting in
-            the terminal or browse the documentation.
-          </p>
+        <section className="lesson">
+          <div className="lesson__card">
+            <h2>Next Steps</h2>
 
-          <button className="button" onClick={() => navigate("/app/terminal")}>
-            Open terminal
+            <p>
+              Continue experimenting in the interactive terminal or browse the
+              documentation to deepen your understanding of Carbon.
+            </p>
+          </div>
+
+          <button
+            className="button button--primary"
+            onClick={() => navigate("/app/terminal")}
+          >
+            Open Interactive Terminal
           </button>
-        </div>
+        </section>
       </Page>
     );
   }
 
-  const objectives: string[] = []
+  const objectives: string[] = [];
 
-if (lesson.objective?.concept) {
-  objectives.push(lesson.objective.concept)
-}
+  if (lesson.objective?.concept) {
+    objectives.push(lesson.objective.concept);
+  }
 
-if (lesson.objective?.command) {
-  objectives.push(`Use the '${lesson.objective.command}' command`)
-}
+  if (lesson.objective?.command) {
+    objectives.push(`Use the '${lesson.objective.command}' command`);
+  }
 
-if (lesson.mission?.objective?.concept) {
-  objectives.push(lesson.mission.objective.concept)
-}
+  if (lesson.mission?.objective?.concept) {
+    objectives.push(lesson.mission.objective.concept);
+  }
 
-if (lesson.mission?.objective?.command) {
-  objectives.push(`Use the '${lesson.mission.objective.command}' command`)
-}
+  if (lesson.mission?.objective?.command) {
+    objectives.push(`Use the '${lesson.mission.objective.command}' command`);
+  }
 
   return (
     <Page
       title={lesson.title}
       subtitle={
-        lesson.story ?? lesson.explanation ?? lesson.mission?.description ?? ""
+        lesson.story ??
+        lesson.explanation ??
+        lesson.mission?.description ??
+        ""
       }
     >
-      <section className="lesson-card">
-        <div>
-          <h2>Mission objectives</h2>
+      <section className="lesson">
+        <div className="lesson__card">
+          <h2>Mission</h2>
 
-          <ul>
-            {objectives.map((objective: string) => (
+          <p>
+            Complete the following objectives using the Carbon terminal.
+          </p>
+
+          <ul className="lesson__objectives">
+            {objectives.map((objective) => (
               <li key={objective}>{objective}</li>
             ))}
           </ul>
         </div>
 
-        <button className="button" onClick={() => navigate("/app/terminal")}>
-          Open terminal
+        {lesson.mission?.hints && lesson.mission.hints.length > 0 && (
+          <div className="lesson__card">
+            <h2>Hints</h2>
+
+            <ul className="lesson__hints">
+              {lesson.mission.hints.map((hint) => (
+                <li key={hint}>{hint}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="lesson__card">
+          <h2>Related Documentation</h2>
+
+          <ul className="lesson__links">
+            <li>Filesystem</li>
+
+            {lesson.objective?.command && (
+              <li>{lesson.objective.command}</li>
+            )}
+
+            {lesson.mission?.objective?.command && (
+              <li>{lesson.mission.objective.command}</li>
+            )}
+          </ul>
+        </div>
+
+        <button
+          className="button button--primary lesson__launch"
+          onClick={() => navigate("/app/terminal")}
+        >
+          Open Interactive Terminal
         </button>
       </section>
     </Page>
