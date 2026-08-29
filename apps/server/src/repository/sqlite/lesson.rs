@@ -171,4 +171,52 @@ impl LessonRepository for SqliteLessonRepository {
 
         Ok(())
     }
+
+    async fn clear_current_lesson(&self, user_id: String) -> Result<()> {
+        sqlx::query(
+            r#"
+        DELETE FROM users_current_lesson
+        WHERE user_id = ?
+        "#,
+        )
+        .bind(user_id)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
+
+    async fn has_completed_lesson(&self, user_id: String, lesson_id: &str) -> Result<bool> {
+        let exists = sqlx::query_scalar::<_, i64>(
+            r#"
+        SELECT EXISTS(
+            SELECT 1
+            FROM lesson_progress
+            WHERE user_id = ?
+              AND lesson_id = ?
+              AND status = 'Completed'
+        )
+        "#,
+        )
+        .bind(user_id)
+        .bind(lesson_id)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(exists != 0)
+    }
+
+    async fn clear_current_lesson(&self, user_id: String) -> Result<()> {
+        sqlx::query(
+            r#"
+        DELETE FROM users_current_lesson
+        WHERE user_id = ?
+        "#,
+        )
+        .bind(user_id)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(())
+    }
 }

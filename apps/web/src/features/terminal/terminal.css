@@ -38,6 +38,7 @@
   flex: 1;
   padding: 1.25rem;
   overflow: auto;
+  overscroll-behavior: none;
 }
 .terminal__line,
 .terminal__input {

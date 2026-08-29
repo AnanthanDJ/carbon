@@ -1,49 +1,61 @@
-id: 2.3
+id: "c2l3"
+
 title: "Move Forward"
-difficulty: "Beginner"
-estimated_time: "5 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 5
 
 story: >
   A new path opens toward an unexplored region of the Terminal Realm.
   To continue your adventure, you must learn to move between
   directories.
 
-mission: >
-  Change your current directory to /tmp.
+mission:
+  title: "Move Forward"
 
-objective:
-  concept: "Changing directories"
-  command: "cd"
-  syntax: "cd [DIRECTORY]"
+  description: >
+    Change your current directory to /tmp.
+
+  objective:
+    concept: changing_directories
+    command: cd
+
+  validator:
+    type: exact_command
+    command: "cd /tmp"
+
+  hints:
+    - "A successful cd command usually produces no output."
+    - "Verify your location afterward with pwd."
+    - "The /tmp directory exists on most Linux systems."
+
+  common_mistakes:
+    - mistake: "Expecting confirmation text"
+      explanation: "The cd command works silently when successful."
+
+    - mistake: "Trying to cd into a file"
+      explanation: "Only directories can be entered."
+
+    - mistake: "Typing the path incorrectly"
+      explanation: "Linux paths are case-sensitive."
+
+  challenge:
+    description: "Move back to your home directory."
+    example: |
+      cd ~
+      pwd
 
 explanation: >
   The cd command changes your current working directory.
   Nearly every terminal workflow depends on moving between folders.
   Once inside a directory, most commands operate relative to it.
 
-command: "cd /tmp"
+example:
+  command: "cd /tmp"
 
-expected_output: |
-  (No output)
-
-hints:
-  - "A successful cd command usually produces no output."
-  - "Verify your location afterward with pwd."
-  - "The /tmp directory exists on most Linux systems."
-
-common_mistakes:
-  - mistake: "Expecting confirmation text"
-    reason: "cd works silently when successful."
-  - mistake: "Trying to cd into a file"
-    reason: "Only directories can be entered."
-  - mistake: "Typing the path incorrectly"
-    reason: "Linux paths are case-sensitive."
-
-challenge:
-  description: "Move back to your home directory."
-  example: |
-    cd ~
-    pwd
+  output: |
+    (No output)
 
 learning_points:
   - "Directories form a tree structure."
@@ -54,7 +66,7 @@ victory_message: >
   You have successfully traveled to a new location.
   More of the Terminal Realm is now open to you.
 
-rewards:
-  - "Directory traversal"
-  - "Navigation mastery"
-  - "XP +15"
+reward:
+  xp: 15
+
+next: "c2l4"

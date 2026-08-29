@@ -1,60 +1,71 @@
-id: 3.6
+id: "c3l6"
+
 title: "Master's Guidance"
-difficulty: "Beginner"
-estimated_time: "5 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 5
 
 story: >
   Your training is nearly complete. Before earning the title of
   Terminal Explorer, review the wisdom of the command line one final
   time.
 
-mission: >
-  Display the help information for the rm command.
+mission:
+  title: "Master's Guidance"
 
-objective:
-  concept: "Using built-in documentation"
-  command: "help"
-  syntax: "help rm"
+  description: >
+    Display the built-in help information for the pwd command.
+
+  objective:
+    concept: using_command_documentation
+    command: help
+
+  validator:
+    type: exact_command
+    command: "help pwd"
+
+  hints:
+    - "Type help followed by the command name."
+    - "Read the description before the options."
+    - "You don't need to memorize everything."
+
+  common_mistakes:
+    - mistake: "Running pwd --help"
+      explanation: "Since pwd is a shell built-in, use help pwd."
+
+    - mistake: "Ignoring documentation"
+      explanation: "Reading documentation helps you understand commands before using them."
+
+  challenge:
+    description: "View the help page for mkdir."
+    example: "help mkdir"
 
 explanation: >
   Throughout your journey, you've learned that documentation is one
-  of the most valuable tools available. While rm itself is usually an
-  external command (commonly documented with man rm), this lesson
-  reinforces the habit of seeking command documentation whenever
-  you're unsure how a command behaves.
+  of the most valuable tools available. The help command provides
+  documentation for shell built-in commands, making it easier to
+  understand how they work without leaving the terminal.
 
-command: "help rm"
+example:
+  command: "help pwd"
 
-expected_output: |
-  If rm is not a shell built-in, your shell may report:
-  bash: help: no help topics match 'rm'
-
-hints:
-  - "Not every command is a shell built-in."
-  - "If help doesn't work, try man rm on a Linux system."
-
-common_mistakes:
-  - mistake: "Assuming every command supports help"
-    reason: "Only shell built-ins are handled by help."
-  - mistake: "Ignoring documentation"
-    reason: "Reading documentation prevents mistakes."
-
-challenge:
-  description: "Open the manual page for rm (if available)."
-  example: "man rm"
+  output: |
+    pwd: pwd [-LP]
+        Print the name of the current working directory.
+    ...
 
 learning_points:
-  - "Some commands use help, others use man."
   - "Documentation is an essential Linux skill."
-  - "Always verify destructive commands before running them."
+  - "Shell built-ins provide documentation through help."
+  - "Reading documentation builds confidence and prevents mistakes."
 
 victory_message: >
   Congratulations! You have completed Terminal Quest.
   You can now navigate the filesystem, create and manage files,
   and confidently use documentation whenever you need guidance.
 
-rewards:
-  - "Command reference confidence"
-  - "Terminal Explorer Badge 🏆"
-  - "Course Complete"
-  - "XP +50"
+reward:
+  xp: 50
+
+next: "end"

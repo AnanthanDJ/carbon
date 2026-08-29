@@ -1,44 +1,55 @@
-id: 3.3
+id: "c3l3"
+
 title: "Read the File"
-difficulty: "Beginner"
-estimated_time: "4 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 4
 
 story: >
   Before continuing your journey, inspect your journal to see what it
   contains.
 
-mission: >
-  Display the contents of diary.txt.
+mission:
+  title: "Read the File"
 
-objective:
-  concept: "Viewing file contents"
-  command: "cat"
-  syntax: "cat FILE"
+  description: >
+    Display the contents of diary.txt.
+
+  objective:
+    concept: viewing_file_contents
+    command: cat
+
+  validator:
+    type: exact_command
+    command: "cat terminal-camp/diary.txt"
+
+  hints:
+    - "Empty files produce no visible output."
+    - "cat does not modify the file."
+
+  common_mistakes:
+    - mistake: "Expecting placeholder text"
+      explanation: "An empty file has nothing to display."
+
+    - mistake: "Using the wrong filename"
+      explanation: "Linux filenames are case-sensitive."
+
+  challenge:
+    description: "Create a second file and display it with cat."
+    example: |
+      touch terminal-camp/log.txt
+      cat terminal-camp/log.txt
 
 explanation: >
   The cat command displays the contents of a file directly in the
   terminal. It is useful for quickly reading text files.
 
-command: "cat terminal-camp/diary.txt"
+example:
+  command: "cat terminal-camp/diary.txt"
 
-expected_output: |
-  (The file is empty, so no text is displayed.)
-
-hints:
-  - "Empty files produce no visible output."
-  - "cat does not modify the file."
-
-common_mistakes:
-  - mistake: "Expecting placeholder text"
-    reason: "An empty file has nothing to display."
-  - mistake: "Using the wrong filename"
-    reason: "Linux filenames are case-sensitive."
-
-challenge:
-  description: "Create a second file and display it with cat."
-  example: |
-    touch terminal-camp/log.txt
-    cat terminal-camp/log.txt
+  output: |
+    (The file is empty, so no text is displayed.)
 
 learning_points:
   - "cat reads files."
@@ -48,7 +59,7 @@ learning_points:
 victory_message: >
   You have inspected your journal and confirmed its contents.
 
-rewards:
-  - "File viewing"
-  - "Content inspection"
-  - "XP +15"
+reward:
+  xp: 15
+
+next: "c3l4"

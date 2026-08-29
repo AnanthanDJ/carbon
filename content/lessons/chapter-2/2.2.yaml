@@ -1,48 +1,59 @@
-id: 2.2
+id: "c2l2"
+
 title: "List the Area"
-difficulty: "Beginner"
-estimated_time: "5 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 5
 
 story: >
   Before entering unfamiliar territory, it's wise to inspect your
   surroundings. The contents of a directory often reveal clues about
   what lies ahead.
 
-mission: >
-  List the files and folders in the current directory.
+mission:
+  title: "List the Area"
 
-objective:
-  concept: "Viewing directory contents"
-  command: "ls"
-  syntax: "ls"
+  description: >
+    List the files and folders in the current directory.
+
+  objective:
+    concept: viewing_directory_contents
+    command: ls
+
+  validator:
+    type: exact_command
+    command: "ls"
+
+  hints:
+    - "No arguments are required."
+    - "Every directory has different contents."
+    - "Use ls often while navigating."
+
+  common_mistakes:
+    - mistake: "Expecting the same file names"
+      explanation: "Each computer has different files."
+
+    - mistake: "Typing Is instead of ls"
+      explanation: "The command begins with a lowercase L."
+
+  challenge:
+    description: "List the contents of the root directory."
+    example: "ls /"
 
 explanation: >
   The ls command lists the files and directories in your current
   location. It is one of the most frequently used Linux commands and
   helps you discover what resources are available.
 
-command: "ls"
+example:
+  command: "ls"
 
-expected_output: |
-  Documents
-  Downloads
-  Pictures
-  notes.txt
-
-hints:
-  - "No arguments are required."
-  - "Every directory has different contents."
-  - "Use ls often while navigating."
-
-common_mistakes:
-  - mistake: "Expecting the same file names"
-    reason: "Each computer has different files."
-  - mistake: "Typing Is instead of ls"
-    reason: "The command begins with a lowercase L."
-
-challenge:
-  description: "List the contents of the root directory."
-  example: "ls /"
+  output: |
+    Documents
+    Downloads
+    Pictures
+    notes.txt
 
 learning_points:
   - "Directories contain files and other directories."
@@ -53,7 +64,7 @@ victory_message: >
   The landscape is now visible.
   You know what lies around you before moving forward.
 
-rewards:
-  - "Directory inspection"
-  - "File discovery"
-  - "XP +10"
+reward:
+  xp: 10
+
+next: "c2l3"

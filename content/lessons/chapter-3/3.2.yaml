@@ -1,42 +1,53 @@
-id: 3.2
+id: "c3l2"
+
 title: "Create a File"
-difficulty: "Beginner"
-estimated_time: "4 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 4
 
 story: >
   A camp is not complete without a journal. Record the beginning of
   your adventure by creating your first file.
 
-mission: >
-  Create an empty file named diary.txt inside terminal-camp.
+mission:
+  title: "Create a File"
 
-objective:
-  concept: "Creating empty files"
-  command: "touch"
-  syntax: "touch FILE"
+  description: >
+    Create an empty file named diary.txt inside terminal-camp.
+
+  objective:
+    concept: creating_files
+    command: touch
+
+  validator:
+    type: exact_command
+    command: "touch terminal-camp/diary.txt"
+
+  hints:
+    - "The directory must already exist."
+    - "Verify the file using ls terminal-camp."
+
+  common_mistakes:
+    - mistake: "Misspelling the directory name"
+      explanation: "The path must exist before the file can be created."
+
+    - mistake: "Expecting text inside the file"
+      explanation: "touch creates an empty file."
+
+  challenge:
+    description: "Create another file named notes.txt."
+    example: "touch terminal-camp/notes.txt"
 
 explanation: >
   The touch command creates an empty file if it doesn't exist.
   If the file already exists, it updates its modification timestamp.
 
-command: "touch terminal-camp/diary.txt"
+example:
+  command: "touch terminal-camp/diary.txt"
 
-expected_output: |
-  (No output)
-
-hints:
-  - "The directory must already exist."
-  - "Verify the file using ls terminal-camp."
-
-common_mistakes:
-  - mistake: "Misspelling the directory name"
-    reason: "The path must exist before the file can be created."
-  - mistake: "Expecting text inside the file"
-    reason: "touch creates an empty file."
-
-challenge:
-  description: "Create another file named notes.txt."
-  example: "touch terminal-camp/notes.txt"
+  output: |
+    (No output)
 
 learning_points:
   - "Files store information."
@@ -46,7 +57,7 @@ learning_points:
 victory_message: >
   Your journal is ready for future adventures.
 
-rewards:
-  - "File creation"
-  - "Basic file handling"
-  - "XP +15"
+reward:
+  xp: 15
+
+next: "c3l3"

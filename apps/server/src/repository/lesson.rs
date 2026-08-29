@@ -16,4 +16,10 @@ pub trait LessonRepository: Send + Sync {
     async fn complete_lesson(&self, user_id: String, lesson_id: &str) -> Result<()>;
 
     async fn record_attempt(&self, attempt: LessonAttempt) -> Result<()>;
+
+    async fn clear_current_lesson(&self, user_id: String) -> Result<()>;
+
+    async fn has_completed_lesson(&self, user_id: String, lesson_id: &str) -> Result<bool>;
+
+    async fn clear_current_lesson(&self, user_id: String) -> Result<()>;
 }

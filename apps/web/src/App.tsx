@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Link,
   NavLink,
@@ -145,24 +145,45 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
 type IconName = "home" | "lesson" | "terminal" | "docs";
 
 const navigation: { label: string; path: string; icon: IconName }[] = [
-  { label: "Home", path: "/app", icon: "home" },
+  { label: "Home", path: "/", icon: "home" },
   { label: "Lesson", path: "/app/learn/first-directory", icon: "lesson" },
   { label: "Terminal", path: "/app/terminal", icon: "terminal" },
   { label: "Docs", path: "/app/docs", icon: "docs" },
 ];
-
-const icons: Record<IconName, string> = {
-  home: "⌂",
-  lesson: "▣",
-  terminal: ">_",
-  docs: "▤",
-};
 
 function Header() {
   const { user, logout } = useAuth();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(event: MouseEvent) {
+      if (
+        profileOpen &&
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [profileOpen]);
+
+  useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, []);
 
   return (
     <header className="header">
@@ -200,14 +221,9 @@ function Header() {
               `nav__link ${isActive ? "nav__link--active" : ""}`
             }
           >
-            <span>{icons[item.icon]}</span>
             {item.label}
           </NavLink>
         ))}
-
-        <span className="nav__future">
-          Notes <em>soon</em>
-        </span>
       </nav>
 
       {menuOpen && (
@@ -218,7 +234,7 @@ function Header() {
         />
       )}
 
-      <div className="profile">
+      <div ref={profileRef} className="profile">
         <button
           className="profile__trigger"
           onClick={() => setProfileOpen((value) => !value)}
@@ -273,15 +289,15 @@ function Page({
 }) {
   return (
     <main className="page">
-      <div className="page__intro">
+      <div className="page__content">
         <p className="eyebrow">Carbon Academy</p>
 
         <h1>{title}</h1>
 
         <p>{subtitle}</p>
-      </div>
 
-      {children}
+        {children}
+      </div>
     </main>
   );
 }
@@ -348,19 +364,14 @@ function LessonPage() {
     <Page
       title={lesson.title}
       subtitle={
-        lesson.story ??
-        lesson.explanation ??
-        lesson.mission?.description ??
-        ""
+        lesson.story ?? lesson.explanation ?? lesson.mission?.description ?? ""
       }
     >
       <section className="lesson">
         <div className="lesson__card">
           <h2>Mission</h2>
 
-          <p>
-            Complete the following objectives using the Carbon terminal.
-          </p>
+          <p>Complete the following objectives using the Carbon terminal.</p>
 
           <ul className="lesson__objectives">
             {objectives.map((objective) => (
@@ -387,9 +398,7 @@ function LessonPage() {
           <ul className="lesson__links">
             <li>Filesystem</li>
 
-            {lesson.objective?.command && (
-              <li>{lesson.objective.command}</li>
-            )}
+            {lesson.objective?.command && <li>{lesson.objective.command}</li>}
 
             {lesson.mission?.objective?.command && (
               <li>{lesson.mission.objective.command}</li>
@@ -621,22 +630,22 @@ function GlossaryPage({ entry }: { entry: string }) {
 
 function Settings() {
   const { activeThemeId, setActiveThemeId } = useTheme();
-
   return (
     <Page
-      title="Appearance"
-      subtitle="Choose the colour system that feels most comfortable for you."
+      title="Settings"
+      subtitle="Personalise the workspace without changing the learning experience."
     >
-      <section className="settings-panel">
-        <h2>Theme</h2>
-
-        <div className="theme-grid">
+      <section className="card theme-settings">
+        <div>
+          <p className="eyebrow">Appearance</p>
+          <h2>Theme</h2>
+          <p>Choose the colour system that feels most comfortable for you.</p>
+        </div>
+        <div className="theme-options">
           {themes.map((theme) => (
             <label
+              className={`theme-option ${activeThemeId === theme.id ? "theme-option--selected" : ""}`}
               key={theme.id}
-              className={`theme-option ${
-                activeThemeId === theme.id ? "theme-option--selected" : ""
-              }`}
             >
               <input
                 type="radio"
@@ -645,31 +654,15 @@ function Settings() {
                 checked={activeThemeId === theme.id}
                 onChange={() => setActiveThemeId(theme.id)}
               />
-
-              <div className="theme-preview">
-                <i
-                  style={{
-                    background: theme.colors["--canvas"],
-                  }}
-                />
-
-                <i
-                  style={{
-                    background: theme.colors["--surface"],
-                  }}
-                />
-
-                <i
-                  style={{
-                    background: theme.colors["--accent"],
-                  }}
-                />
-              </div>
-
-              <div className="theme-meta">
+              <span className="theme-option__swatches">
+                <i style={{ background: theme.colors["--canvas"] }} />
+                <i style={{ background: theme.colors["--surface"] }} />
+                <i style={{ background: theme.colors["--accent"] }} />
+              </span>
+              <span>
                 <strong>{theme.name}</strong>
-                <p>{theme.description}</p>
-              </div>
+                <small>{theme.description}</small>
+              </span>
             </label>
           ))}
         </div>
@@ -680,22 +673,25 @@ function Settings() {
 
 function AppShell() {
   return (
-    <>
+    <div className="app-shell">
       <Header />
-      <Routes>
-        <Route
+
+      <main className="app-content">
+        <Routes>
+          <Route
             index
             element={<Navigate to="learn/first-directory" replace />}
-        />
-        <Route path="learn/:lesson" element={<LessonPage />} />
-        <Route path="terminal" element={<Terminal />} />
-        <Route path="docs" element={<DocsPage />} />
-        <Route path="docs/:command" element={<DocsRoute />} />
-        <Route path="glossary/:entry" element={<GlossaryRoute />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="*" element={<Navigate to="/app" replace />} />
-      </Routes>
-    </>
+          />
+          <Route path="learn/:lesson" element={<LessonPage />} />
+          <Route path="terminal" element={<Terminal />} />
+          <Route path="docs" element={<DocsPage />} />
+          <Route path="docs/:command" element={<DocsRoute />} />
+          <Route path="glossary/:entry" element={<GlossaryRoute />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="*" element={<Navigate to="/app" replace />} />
+        </Routes>
+      </main>
+    </div>
   );
 }
 function DocsRoute() {

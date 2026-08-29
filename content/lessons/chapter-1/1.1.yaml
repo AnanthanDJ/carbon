@@ -1,7 +1,10 @@
-id: 1.1
+id: "c1l1"
+
 title: "Echo the Message"
-difficulty: "Beginner"
-estimated_time: "3 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 3
 
 story: >
   You awaken inside the Terminal Realm with nothing but a blinking cursor.
@@ -9,40 +12,49 @@ story: >
   communicate through the command line. Your first message will echo
   across the realm.
 
-mission: >
-  Use the echo command to display a greeting in the terminal.
+mission:
+  title: "Echo the Message"
 
-objective:
-  concept: "Printing text"
-  command: "echo"
-  syntax: "echo [TEXT]"
+  description: >
+    Use the echo command to display a greeting in the terminal.
+
+  objective:
+    concept: printing_text
+    command: echo
+
+  validator:
+    type: exact_command
+    command: 'echo "Hello, Terminal!"'
+
+  hints:
+    - "Type the command exactly as shown."
+    - "Keep the quotation marks around the message."
+    - "Press Enter to execute the command."
+
+  common_mistakes:
+    - mistake: "Typing Hello, Terminal! without echo"
+      explanation: "The terminal will try to execute Hello as a command."
+
+    - mistake: "Misspelling echo"
+      explanation: "Linux commands are case-sensitive."
+
+    - mistake: "Forgetting the quotation marks"
+      explanation: "The command still works for simple text, but quotes are recommended for phrases."
+
+  challenge:
+    description: "Print your own name."
+    example: 'echo "Alex"'
 
 explanation: >
   The echo command prints text directly to the terminal.
   It is one of the simplest Linux commands and is often used to
   display messages, debug shell scripts, or show variable values.
 
-command: 'echo "Hello, Terminal!"'
+example:
+  command: 'echo "Hello, Terminal!"'
 
-expected_output: |
-  Hello, Terminal!
-
-hints:
-  - "Type the command exactly as shown."
-  - "Keep the quotation marks around the message."
-  - "Press Enter to execute the command."
-
-common_mistakes:
-  - mistake: "Typing Hello, Terminal! without echo"
-    reason: "The terminal will try to execute Hello as a command."
-  - mistake: "Misspelling echo"
-    reason: "Linux commands are case-sensitive."
-  - mistake: "Forgetting the quotation marks"
-    reason: "The command still works for simple text, but quotes are recommended for phrases."
-
-challenge:
-  description: "Print your own name."
-  example: 'echo "Alex"'
+  output: |
+    Hello, Terminal!
 
 learning_points:
   - "Commands tell the shell what to do."
@@ -53,7 +65,7 @@ victory_message: >
   Your greeting echoes across the Terminal Realm.
   The guardians recognize your presence and allow you to continue.
 
-rewards:
-  - "Confidence with terminal output"
-  - "Understanding command execution"
-  - "XP +10"
+reward:
+  xp: 10
+
+next: "c1l2"

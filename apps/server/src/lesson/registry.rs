@@ -55,7 +55,10 @@ impl LessonRegistry {
 
     /// Returns the next lesson, if one exists.
     pub fn next_of(&self, lesson: &Lesson) -> Option<&Lesson> {
-        lesson.next.as_ref().and_then(|id| self.lessons.get(id))
+        match lesson.next.as_deref() {
+            Some("end") | None => None,
+            Some(id) => self.lessons.get(id),
+        }
     }
 
     /// Ensure a lesson exists.

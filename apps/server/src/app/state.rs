@@ -32,8 +32,7 @@ impl AppState {
         let filesystem = FilesystemService::new(filesystem_repository);
         let lesson_repository = Arc::new(SqliteLessonRepository::new(db.clone()));
 
-        let lesson = LessonService::load("test_content")?;
-        //let lesson = LessonService::load("content/lessons")?;
+        let lesson = LessonService::load("content/lessons")?;
 
         let lesson_runtime =
             LessonRuntimeService::new(lesson_repository, filesystem.clone(), lesson.clone());

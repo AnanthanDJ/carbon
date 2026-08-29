@@ -51,6 +51,14 @@ where
         let id = match self.repository.current_lesson(user_id.clone()).await? {
             Some(id) => id,
             None => {
+                if self
+                    .repository
+                    .has_completed_lesson(user_id.clone(), "c3l6")
+                    .await?
+                {
+                    return Ok(None);
+                }
+
                 let binding = self.lessons.list();
                 let first = binding
                     .first()
@@ -87,8 +95,14 @@ where
         let Some(current) = self.current(user_id.clone()).await? else {
             return Ok(None);
         };
+        // Course completed.
+        if current.next.as_deref() == Some("end") {
+            return Ok(None);
+        }
 
         let Some(next) = self.lessons.next(&current) else {
+            self.repository.clear_current_lesson(user_id).await?;
+
             return Ok(None);
         };
 

@@ -1,43 +1,54 @@
-id: 3.4
+id: "c3l4"
+
 title: "Remove the File"
-difficulty: "Intermediate"
-estimated_time: "5 minutes"
+
+difficulty: intermediate
+
+estimated_minutes: 5
 
 story: >
   Not every record deserves to remain forever. Sometimes old files
   must be removed to keep your workspace clean.
 
-mission: >
-  Delete diary.txt from terminal-camp.
+mission:
+  title: "Remove the File"
 
-objective:
-  concept: "Removing files"
-  command: "rm"
-  syntax: "rm FILE"
+  description: >
+    Delete diary.txt from terminal-camp.
+
+  objective:
+    concept: removing_files
+    command: rm
+
+  validator:
+    type: exact_command
+    command: "rm terminal-camp/diary.txt"
+
+  hints:
+    - "Check the file exists before removing it."
+    - "Verify deletion with ls terminal-camp."
+
+  common_mistakes:
+    - mistake: "Deleting the wrong file"
+      explanation: "rm permanently removes files."
+
+    - mistake: "Using an incorrect path"
+      explanation: "The file must exist at the specified location."
+
+  challenge:
+    description: "Delete the notes.txt file you created earlier."
+    example: "rm terminal-camp/notes.txt"
 
 explanation: >
   The rm command permanently removes files. Unlike many graphical
   file managers, deleted files are typically not moved to a recycle
   bin, so use rm carefully.
 
-command: "rm terminal-camp/diary.txt"
+example:
+  command: "rm terminal-camp/diary.txt"
 
-expected_output: |
-  (No output)
-
-hints:
-  - "Check the file exists before removing it."
-  - "Verify deletion with ls terminal-camp."
-
-common_mistakes:
-  - mistake: "Deleting the wrong file"
-    reason: "rm permanently removes files."
-  - mistake: "Using an incorrect path"
-    reason: "The file must exist at the specified location."
-
-challenge:
-  description: "Delete the notes.txt file you created earlier."
-  example: "rm terminal-camp/notes.txt"
+  output: |
+    (No output)
 
 learning_points:
   - "rm deletes files."
@@ -47,7 +58,7 @@ learning_points:
 victory_message: >
   The unnecessary file has been safely removed.
 
-rewards:
-  - "File removal"
-  - "Safe cleanup practices"
-  - "XP +20"
+reward:
+  xp: 20
+
+next: "c3l5"

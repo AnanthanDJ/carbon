@@ -1,44 +1,55 @@
-id: 3.1
+id: "c3l1"
+
 title: "Create a Directory"
-difficulty: "Beginner"
-estimated_time: "4 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 4
 
 story: >
   Every adventurer needs a safe place to store supplies. Before you
   can keep files organized, you must build a new camp in the
   filesystem.
 
-mission: >
-  Create a new directory named terminal-camp.
+mission:
+  title: "Create a Directory"
 
-objective:
-  concept: "Creating directories"
-  command: "mkdir"
-  syntax: "mkdir DIRECTORY"
+  description: >
+    Create a new directory named terminal-camp.
+
+  objective:
+    concept: creating_directories
+    command: mkdir
+
+  validator:
+    type: exact_command
+    command: "mkdir terminal-camp"
+
+  hints:
+    - "A successful mkdir command is usually silent."
+    - "Use ls afterward to verify the directory exists."
+
+  common_mistakes:
+    - mistake: "Creating a directory that already exists"
+      explanation: "mkdir reports an error if the name is already in use."
+
+    - mistake: "Including spaces without quotes"
+      explanation: "Spaces separate command arguments."
+
+  challenge:
+    description: "Create another directory named projects."
+    example: "mkdir projects"
 
 explanation: >
   The mkdir command creates one or more new directories. Directories
   help organize files into logical groups and keep your workspace
   tidy.
 
-command: "mkdir terminal-camp"
+example:
+  command: "mkdir terminal-camp"
 
-expected_output: |
-  (No output)
-
-hints:
-  - "A successful mkdir command is usually silent."
-  - "Use ls afterward to verify the directory exists."
-
-common_mistakes:
-  - mistake: "Creating a directory that already exists"
-    reason: "mkdir reports an error if the name is already in use."
-  - mistake: "Including spaces without quotes"
-    reason: "Spaces separate command arguments."
-
-challenge:
-  description: "Create another directory named projects."
-  example: "mkdir projects"
+  output: |
+    (No output)
 
 learning_points:
   - "Directories organize files."
@@ -49,7 +60,7 @@ victory_message: >
   Your camp has been built. You now have a place to organize your
   journey.
 
-rewards:
-  - "Folder creation"
-  - "Workspace organization"
-  - "XP +15"
+reward:
+  xp: 15
+
+next: "c3l2"

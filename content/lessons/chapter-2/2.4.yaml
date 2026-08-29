@@ -1,19 +1,44 @@
-id: 2.4
+id: "c2l4"
+
 title: "Ask for Help"
-difficulty: "Beginner"
-estimated_time: "4 minutes"
+
+difficulty: beginner
+
+estimated_minutes: 4
 
 story: >
   The paths ahead become more complex. Even experienced explorers
   consult their guidebooks before continuing into unknown territory.
 
-mission: >
-  Display the help information for the cd command.
+mission:
+  title: "Ask for Help"
 
-objective:
-  concept: "Learning command documentation"
-  command: "help"
-  syntax: "help cd"
+  description: >
+    Display the help information for the cd command.
+
+  objective:
+    concept: learning_command_documentation
+    command: help
+
+  validator:
+    type: exact_command
+    command: "help cd"
+
+  hints:
+    - "Type help followed by the command name."
+    - "Read the description before the options."
+    - "You don't need to memorize everything."
+
+  common_mistakes:
+    - mistake: "Running cd --help"
+      explanation: "cd is a shell built-in, so help cd is preferred."
+
+    - mistake: "Ignoring documentation"
+      explanation: "Reading help builds long-term confidence."
+
+  challenge:
+    description: "Read the help page for pwd."
+    example: "help pwd"
 
 explanation: >
   Since cd is a shell built-in command, help cd displays its
@@ -21,27 +46,13 @@ explanation: >
   Reading documentation is one of the fastest ways to become
   confident with Linux.
 
-command: "help cd"
+example:
+  command: "help cd"
 
-expected_output: |
-  cd: cd [-L|[-P [-e]] [-@]] [dir]
-  Change the shell working directory.
-  ...
-
-hints:
-  - "Type help followed by the command name."
-  - "Read the description before the options."
-  - "You don't need to memorize everything."
-
-common_mistakes:
-  - mistake: "Running cd --help"
-    reason: "cd is a shell built-in; help cd is preferred."
-  - mistake: "Ignoring documentation"
-    reason: "Reading help builds long-term confidence."
-
-challenge:
-  description: "Read the help page for pwd."
-  example: "help pwd"
+  output: |
+    cd: cd [-L|[-P [-e]] [-@]] [dir]
+    Change the shell working directory.
+    ...
 
 learning_points:
   - "Documentation explains command behavior."
@@ -52,8 +63,7 @@ victory_message: >
   You've mastered the basics of navigating the filesystem.
   The gates to Chapter 3 are now unlocked.
 
-rewards:
-  - "Help-based navigation knowledge"
-  - "Confidence reading documentation"
-  - "Stage 3 unlocked"
-  - "XP +20"
+reward:
+  xp: 20
+
+next: "c3l1"

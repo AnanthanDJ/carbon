@@ -1,44 +1,55 @@
-id: 3.5
+id: "c3l5"
+
 title: "Remove the Directory"
-difficulty: "Intermediate"
-estimated_time: "4 minutes"
+
+difficulty: intermediate
+
+estimated_minutes: 4
 
 story: >
   Your camp has served its purpose. After removing everything inside,
   it's time to dismantle it completely.
 
-mission: >
-  Delete the empty terminal-camp directory.
+mission:
+  title: "Remove the Directory"
 
-objective:
-  concept: "Removing empty directories"
-  command: "rmdir"
-  syntax: "rmdir DIRECTORY"
+  description: >
+    Delete the empty terminal-camp directory.
+
+  objective:
+    concept: removing_empty_directories
+    command: rmdir
+
+  validator:
+    type: exact_command
+    command: "rmdir terminal-camp"
+
+  hints:
+    - "The directory must be empty."
+    - "Use ls first to confirm nothing remains."
+
+  common_mistakes:
+    - mistake: "Trying to remove a non-empty directory"
+      explanation: "rmdir only removes empty directories."
+
+    - mistake: "Misspelling the directory name"
+      explanation: "The command requires the exact path."
+
+  challenge:
+    description: "Create and remove another empty directory."
+    example: |
+      mkdir practice
+      rmdir practice
 
 explanation: >
   The rmdir command removes empty directories. If a directory still
   contains files, Linux prevents its removal to protect your data.
 
-command: "rmdir terminal-camp"
+example:
+  command: "rmdir terminal-camp"
 
-expected_output: |
-  (No output)
-
-hints:
-  - "The directory must be empty."
-  - "Use ls first to confirm nothing remains."
-
-common_mistakes:
-  - mistake: "Trying to remove a non-empty directory"
-    reason: "rmdir only removes empty directories."
-  - mistake: "Misspelling the directory name"
-    reason: "The command requires the exact path."
-
-challenge:
-  description: "Create and remove another empty directory."
-  example: |
-    mkdir practice
-    rmdir practice
+  output: |
+    (No output)
 
 learning_points:
   - "Directories must be empty before using rmdir."
@@ -48,7 +59,7 @@ learning_points:
 victory_message: >
   Your camp has been packed away without leaving a trace.
 
-rewards:
-  - "Directory removal"
-  - "Filesystem cleanup"
-  - "XP +20"
+reward:
+  xp: 20
+
+next: "c3l6"

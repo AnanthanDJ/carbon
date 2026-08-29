@@ -1,6 +1,6 @@
-const docs = import.meta.glob('../../../content/docs/*.yaml', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
-const glossary = import.meta.glob('../../../content/glossary/*.md', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
-const mascot = import.meta.glob('../../../content/mascot/*.json', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
+const docs = import.meta.glob('../../../../../content/docs/*.yaml', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
+const glossary = import.meta.glob('../../../../../content/glossary/*.md', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
+const mascot = import.meta.glob('../../../../../content/mascot/*.json', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
 
 type Parameter = { name: string; required?: boolean; description: string }
 type Example = { command: string; output?: string; description?: string }
