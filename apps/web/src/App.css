@@ -1,7 +1,16 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/noto-sans";
+@import "@fontsource-variable/playfair-display";
+
+@custom-variant dark (&:is(.dark *));
+
 html,
 body,
 #root {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   scrollbar-color: var(--border);
@@ -899,3 +908,323 @@ body {
     font-size: 1rem;
   }
 }
+
+.hero__landing {
+  position: fixed;
+  inset: 0;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at center, rgba(0, 255, 120, 0.06), transparent 55%),
+    #050505;
+  color: #f5f5f5;
+}
+
+.landing__scroll {
+  width: 100%;
+  height: 100%;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  z-index: 5;
+
+  background:
+    radial-gradient(circle at center, rgba(0, 255, 120, 0.06), transparent 55%),
+    #050505;
+  scroll-behavior: smooth;
+}
+
+AsciiFluid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.landing__scroll > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__login {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10;
+}
+
+.hero__intro {
+  min-height: 100svh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  padding: 2rem;
+}
+
+.hero__logo {
+  width: auto;
+  height: 75vh;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero__eyebrow {
+  margin: 0;
+  color: #55d6be;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero__subtitle {
+  height: 5vh;
+  margin-bottom: 2rem;
+  color: #b6b6b6;
+  font-size: 1.35rem;
+}
+
+.scroll-cue {
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.scroll-cue .stick {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(to bottom, lime, transparent);
+  animation: drop 1.8s ease-in-out infinite;
+}
+@keyframes drop {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+.hero__about {
+  min-height: 100svh;
+
+  width: min(1400px, 92vw);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 5rem;
+}
+
+.hero__text h1 {
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.hero__text p:last-of-type {
+  max-width: 38rem;
+  color: #9ca3af;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.hero__actions button {
+  background-color: #55d6be;
+}
+
+.hero__terminal {
+  min-height: 520px;
+  border-radius: 18px;
+
+  border: 1px lime;
+
+  background: rgba(12, 12, 12, 0.92);
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 0 40px rgba(0, 255, 120, 0.08),
+    inset 0 0 25px rgba(0, 255, 120, 0.05);
+
+  border-color: lime;
+}
+
+.hero__features {
+  width: min(1400px, 92vw);
+  margin: 0 auto;
+
+  padding: 8rem 0;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  border-style: none;
+}
+
+.hero__card {
+  padding: 2rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  backdrop-filter: blur(8px);
+}
+
+.hero__card h3 {
+  margin-top: 0;
+}
+
+.hero__card p {
+  color: #9ca3af;
+}
+
+@media (max-width: 900px) {
+  .hero__about {
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+    padding: 6rem 0;
+  }
+
+  .hero__terminal {
+    min-height: 380px;
+  }
+
+  .hero__features {
+    grid-template-columns: 1fr;
+    padding: 5rem 0;
+  }
+
+  .hero__logo {
+    width: 92vw;
+  }
+}
+
+.hero__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  padding: 5rem 8vw 3rem;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero__footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+
+  opacity: 0.75;
+  transition: opacity 0.2s;
+  text-align: left;
+}
+
+.footer-link:hover {
+  opacity: 1;
+}
+
+.hero__footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 2rem;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+@media (max-width: 700px) {
+  .hero__footer-bottom {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+@theme inline {
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+

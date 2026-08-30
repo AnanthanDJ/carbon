@@ -20,47 +20,22 @@ import { useLearning } from "./features/lesson/LearningProvider";
 import { Terminal } from "./features/terminal/Terminal";
 import { themes } from "./themes";
 import { useTheme } from "./themes/themeContext";
+import {
+  Terminal as HeroTerminal,
+  TerminalHeader,
+  TerminalTitle,
+  TerminalContent,
+  TerminalActions,
+  TerminalCopyButton,
+} from "@/components/ai/terminal";
 import "./features/settings/themeSettings.css";
 import "./App.css";
+import { AsciiFluid } from "@/components/ui/ascii-fluid";
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { user, ready } = useAuth();
   if (!ready) return <main className="auth-page">Restoring your session…</main>;
   return user ? <>{children}</> : <Navigate to="/login" replace />;
-}
-
-function Landing() {
-  const { user } = useAuth();
-  return (
-    <main className="landing">
-      <p className="eyebrow">Carbon</p>
-      <h1>Learn the terminal by using it.</h1>
-      <p>
-        Carbon teaches command-line fundamentals through guided lessons, real
-        documentation, and an actual terminal.
-      </p>
-      <p className="landing__copy">
-        A safe place to build real command-line confidence through guided
-        practice and documentation.
-      </p>
-      <div className="landing__actions">
-        <Link className="button" to={user ? "/app" : "/register"}>
-          {user ? "Open Carbon" : "Register"}
-        </Link>
-        <Link className="button button--quiet" to="/login">
-          Login
-        </Link>
-        <a
-          className="button button--quiet"
-          href="https://github.com"
-          target="_blank"
-          rel="noreferrer"
-        >
-          GitHub
-        </a>
-      </div>
-    </main>
-  );
 }
 
 function AuthPage({ mode }: { mode: "login" | "register" }) {
@@ -142,10 +117,10 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
   );
 }
 
-type IconName = /*"home" |*/ "lesson" | "terminal" | "docs";
+type IconName = "home" | "lesson" | "terminal" | "docs";
 
 const navigation: { label: string; path: string; icon: IconName }[] = [
-  //{ label: "Home", path: "/", icon: "home" },
+  { label: "Home", path: "/", icon: "home" },
   { label: "Lesson", path: "/app/learn/first-directory", icon: "lesson" },
   { label: "Terminal", path: "/app/terminal", icon: "terminal" },
   { label: "Docs", path: "/app/docs", icon: "docs" },
@@ -275,6 +250,188 @@ function Header() {
         )}
       </div>
     </header>
+  );
+}
+
+function HeroPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  return (
+    <main className="hero__landing">
+      <AsciiFluid
+        theme="dark"
+        color="#5cff8d"
+        backgroundColor="#050505"
+        cellSize={10}
+        interactive
+        animate
+        className="hero__ascii"
+      />
+
+      <div className="landing__scroll">
+        <button
+          className="hero__login"
+          onClick={() => navigate(user ? "/app" : "/login")}
+        >
+          {user ? "Open Carbon" : "Sign In"}
+        </button>
+
+        <section className="hero__intro">
+          <img
+            src="/logo.svg"
+            alt="Carbon"
+            className="hero__logo"
+            draggable={false}
+          />
+
+          <p className="hero__subtitle">Learn Linux through the terminal.</p>
+
+              <div className="scroll-cue"><span>Scroll</span><span className="stick"></span></div>
+
+        </section>
+
+        <section className="hero__about">
+          <div className="hero__text">
+            <p className="hero__eyebrow">Carbon Academy</p>
+
+            <h1>
+              Learn by using a terminal.
+              <br />
+              Not by watching videos.
+            </h1>
+
+            <p>
+              Carbon teaches Linux through interactive lessons, a real terminal,
+              and instant feedback. Every command you type moves your progress
+              forward.
+            </p>
+
+            <div className="hero__actions">
+              <button
+                className="button button--primary"
+                onClick={() => navigate(user ? "/app" : "/register")}
+              >
+                {user ? "Continue Learning" : "Start Learning"}
+              </button>
+
+              <button className="button" onClick={() => navigate("/app/docs")}>
+                Documentation
+              </button>
+            </div>
+          </div>
+
+          <div className="hero__terminal">
+            <HeroTerminal className="h-[520px] w-full">
+              <TerminalHeader>
+                <TerminalTitle>carbon</TerminalTitle>
+              </TerminalHeader>
+
+              <TerminalContent>
+                <div className="space-y-2 font-mono text-sm">
+                  <div>
+                    <span className="text-zinc-500">$</span>{" "}
+                    <span className="text-green-400">carbon start</span>
+                  </div>
+
+                  <div className="text-zinc-400">
+                    Initializing interactive Linux environment...
+                  </div>
+
+                  <div className="text-emerald-400">✓ Workspace ready</div>
+
+                  <br />
+
+                  <div>
+                    <span className="text-zinc-500">$</span>{" "}
+                    <span className="text-blue-400">pwd</span>
+                  </div>
+
+                  <div className="text-zinc-300">/home/learner</div>
+
+                  <br />
+
+                  <div>
+                    <span className="text-zinc-500">$</span>{" "}
+                    <span className="text-blue-400">mkdir projects</span>
+                  </div>
+
+                  <div className="text-emerald-400">✓ Directory created</div>
+
+                  <br />
+
+                  <div>
+                    <span className="text-zinc-500">$</span>{" "}
+                    <span className="text-blue-400">cd projects</span>
+                  </div>
+
+                  <div className="text-yellow-400">+10 XP</div>
+
+                  <div className="text-cyan-400">Lesson Complete!</div>
+
+                  <br />
+
+                  <div>
+                    <span className="text-zinc-500">$</span>{" "}
+                    <span className="mt-4 animate-pulse text-green-400">█</span>
+                  </div>
+                </div>
+              </TerminalContent>
+            </HeroTerminal>
+          </div>
+        </section>
+
+        <section className="hero__features">
+          <div className="hero__card">
+            <h3>Interactive Lessons</h3>
+            <p>Progress by completing real terminal missions.</p>
+          </div>
+
+          <div className="hero__card">
+            <h3>Real Commands</h3>
+            <p>Practice genuine Linux commands instead of simulations.</p>
+          </div>
+
+          <div className="hero__card">
+            <h3>Documentation</h3>
+            <p>Built-in references whenever you need them.</p>
+          </div>
+        </section>
+
+        <footer className="hero__footer">
+
+  <div className="hero__footer-links">
+    <button
+      className="footer-link"
+      onClick={() => navigate("/app/docs")}
+    >
+      Documentation
+    </button>
+
+    <button
+      className="footer-link"
+      onClick={() => navigate(user ? "/app" : "/register")}
+    >
+      {user ? "Continue Learning" : "Get Started"}
+    </button>
+
+    <a
+      className="footer-link"
+      href="https://github.com/Carbon-Org/carbon"
+      target="_blank"
+      rel="noreferrer"
+    >
+      GitHub
+    </a>
+  </div>
+
+  <div className="hero__footer-bottom">
+    <span>© {new Date().getFullYear()} Carbon</span>
+    <span>Built for people learning Linux.</span>
+  </div>
+</footer>
+      </div>
+    </main>
   );
 }
 
@@ -705,7 +862,7 @@ function GlossaryRoute() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<HeroPage />} />
       <Route path="/login" element={<AuthPage mode="login" />} />
       <Route path="/register" element={<AuthPage mode="register" />} />
       <Route
