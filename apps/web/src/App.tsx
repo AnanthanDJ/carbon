@@ -142,10 +142,10 @@ function AuthPage({ mode }: { mode: "login" | "register" }) {
   );
 }
 
-type IconName = "home" | "lesson" | "terminal" | "docs";
+type IconName = /*"home" |*/ "lesson" | "terminal" | "docs";
 
 const navigation: { label: string; path: string; icon: IconName }[] = [
-  { label: "Home", path: "/", icon: "home" },
+  //{ label: "Home", path: "/", icon: "home" },
   { label: "Lesson", path: "/app/learn/first-directory", icon: "lesson" },
   { label: "Terminal", path: "/app/terminal", icon: "terminal" },
   { label: "Docs", path: "/app/docs", icon: "docs" },

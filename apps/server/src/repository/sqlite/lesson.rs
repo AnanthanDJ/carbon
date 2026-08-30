@@ -205,18 +205,4 @@ impl LessonRepository for SqliteLessonRepository {
 
         Ok(exists != 0)
     }
-
-    async fn clear_current_lesson(&self, user_id: String) -> Result<()> {
-        sqlx::query(
-            r#"
-        DELETE FROM users_current_lesson
-        WHERE user_id = ?
-        "#,
-        )
-        .bind(user_id)
-        .execute(&self.pool)
-        .await?;
-
-        Ok(())
-    }
 }
