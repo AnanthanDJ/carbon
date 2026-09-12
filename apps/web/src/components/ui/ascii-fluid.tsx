@@ -223,11 +223,7 @@ void main() {
 }
 `
 
-function isDev() {
-  return (
-    typeof process !== "undefined" && process.env?.NODE_ENV !== "production"
-  )
-}
+const isDev = () => import.meta.env.DEV;
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "").trim()

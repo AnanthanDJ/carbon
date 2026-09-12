@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface TerminalContextType {
-  output: string;
+  output?: string;
   isStreaming: boolean;
   autoScroll: boolean;
   onClear?: () => void;
@@ -27,7 +27,7 @@ const TerminalContext = createContext<TerminalContextType>({
 });
 
 export type TerminalProps = HTMLAttributes<HTMLDivElement> & {
-  output: string;
+  output?: string;
   isStreaming?: boolean;
   autoScroll?: boolean;
   onClear?: () => void;
@@ -43,7 +43,7 @@ export const Terminal = ({
   ...props
 }: TerminalProps) => (
   <TerminalContext.Provider
-    value={{ output, isStreaming, autoScroll, onClear }}
+    value={{ output: output ?? "", isStreaming, autoScroll, onClear }}
   >
     <div
       className={cn(
@@ -164,7 +164,7 @@ export const TerminalCopyButton = ({
     }
 
     try {
-      await navigator.clipboard.writeText(output);
+      await navigator.clipboard.writeText(output ?? "");
       setIsCopied(true);
       onCopy?.();
       setTimeout(() => setIsCopied(false), timeout);

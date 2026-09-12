@@ -25,8 +25,6 @@ import {
   TerminalHeader,
   TerminalTitle,
   TerminalContent,
-  TerminalActions,
-  TerminalCopyButton,
 } from "@/components/ai/terminal";
 import "./features/settings/themeSettings.css";
 import "./App.css";
