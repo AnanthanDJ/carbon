@@ -5,8 +5,10 @@ mod state;
 
 use crate::app::config::Config;
 use anyhow::Result;
+use axum::http::{HeaderValue, Method};
 pub use state::AppState;
 use tokio::net::TcpListener;
+use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 pub async fn run() -> Result<()> {
@@ -25,7 +27,22 @@ pub async fn run() -> Result<()> {
 
     let state = AppState::new(config.clone(), db)?;
 
-    let app = router::build(state);
+    let cors = CorsLayer::new()
+        .allow_origin(
+            "https://carbon-dw3.pages.dev"
+                .parse::<HeaderValue>()
+                .unwrap(),
+        )
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
+        .allow_headers(Any);
+
+    let app = router::build(state).layer(cors);
 
     let address = format!("{}:{}", config.host, config.port,);
 
