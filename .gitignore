@@ -10,7 +10,7 @@ apps/web/dist/
 *.db-shm
 *.db-wal
 
-data/
+data/*
 !data/.gitkeep
 
 # Environment
