@@ -916,3 +916,9 @@ The current lesson is reused instead of being fetched again, reducing one unnece
 | Total Requests | 1000 | 1000 |
 
 Although the benchmark difference is small, the optimization removes redundant work from the request path and scales better as lesson completion traffic increases.
+
+**Raw benchmark results**
+
+- 📄 [Before Optimization](docs/optimization/before.txt)
+- 📄 [After Optimization](docs/optimization/after.txt)
+- 📖 [Benchmark Methodology](docs/optimization/desc.md)
