@@ -856,3 +856,63 @@ Follow the roadmap in the repository for upcoming milestones.
 Try Carbon online: 
 
 > https://carbon-dw3.pages.dev/
+
+---
+
+## 🏆 Buildathon Challenge Implementations
+
+### Phase 1 — Progress Tracker
+
+**Challenge:** Show progress through an important project process.
+
+**Implementation**
+- Added a course progress API.
+- Tracks completed lessons for every user.
+- Displays a progress bar showing:
+
+```
+Completed Lessons / Total Lessons
+```
+
+instead of tracking only the current lesson.
+
+This gives learners a clear sense of overall course progression.
+
+---
+
+### Phase 2 — Increased Usage
+
+**Challenge:** Improve system performance under concurrent usage.
+
+**Optimization**
+
+Reduced redundant lesson lookups during lesson progression.
+
+Previously:
+
+```
+validate()
+    └── advance()
+            └── current()
+                    └── Database lookup
+```
+
+Now:
+
+```
+validate()
+    └── advance(current_lesson)
+```
+
+The current lesson is reused instead of being fetched again, reducing one unnecessary database query for every successful lesson completion.
+
+### Benchmark
+
+| Metric | Before | After |
+|--------|--------:|-------:|
+| Success Rate | 100% | 100% |
+| Avg Response Time | 174.1 ms | 174.6 ms |
+| Concurrent Requests | 100 | 100 |
+| Total Requests | 1000 | 1000 |
+
+Although the benchmark difference is small, the optimization removes redundant work from the request path and scales better as lesson completion traffic increases.
