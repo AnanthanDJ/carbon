@@ -468,7 +468,8 @@ function GlossaryLinks() {
 
 function LessonPage() {
   const navigate = useNavigate();
-  const { lesson } = useLearning();
+  const { lesson, progress } = useLearning();
+  console.log(progress);
 
   if (!lesson) {
     return (
@@ -523,6 +524,35 @@ function LessonPage() {
       }
     >
       <section className="lesson">
+      {progress && (
+  <div className="lesson__card">
+    <h2>Course Progress</h2>
+
+    <div
+      style={{
+        width: "100%",
+        height: 10,
+        background: "#2f2f2f",
+        borderRadius: 999,
+        overflow: "hidden",
+        marginTop: 8,
+      }}
+    >
+      <div
+        style={{
+          width: `${(progress.completed / progress.total) * 100}%`,
+          height: "100%",
+          background: "#22c55e",
+          transition: "width 0.3s ease",
+        }}
+      />
+    </div>
+
+    <p style={{ marginTop: 8 }}>
+      {progress.completed} / {progress.total} lessons completed
+    </p>
+  </div>
+)}
         <div className="lesson__card">
           <h2>Mission</h2>
 

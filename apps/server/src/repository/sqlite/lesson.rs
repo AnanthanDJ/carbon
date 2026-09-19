@@ -127,7 +127,7 @@ impl LessonRepository for SqliteLessonRepository {
     async fn complete_lesson(&self, user_id: String, lesson_id: &str) -> Result<()> {
         let now = Utc::now().to_rfc3339();
 
-        sqlx::query(
+        let result = sqlx::query(
             r#"
         UPDATE lesson_progress
         SET
@@ -144,6 +144,8 @@ impl LessonRepository for SqliteLessonRepository {
         .bind(lesson_id)
         .execute(&self.pool)
         .await?;
+
+        println!("complete_lesson: updated {} row(s)", result.rows_affected());
 
         Ok(())
     }
@@ -204,5 +206,21 @@ impl LessonRepository for SqliteLessonRepository {
         .await?;
 
         Ok(exists != 0)
+    }
+
+    async fn completed_lessons(&self, user_id: String) -> Result<usize> {
+        let count: i64 = sqlx::query_scalar(
+            r#"
+        SELECT COUNT(*)
+        FROM lesson_progress
+        WHERE user_id = ?
+          AND status = 'Completed'
+        "#,
+        )
+        .bind(user_id)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(count as usize)
     }
 }

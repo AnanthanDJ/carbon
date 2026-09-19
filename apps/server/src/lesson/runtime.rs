@@ -7,7 +7,7 @@ use super::LessonService;
 use crate::{
     filesystem::FilesystemService,
     lesson::{Lesson, LessonValidator},
-    models::LessonAttempt,
+    models::{CourseProgress, LessonAttempt},
     repository::{FilesystemRepository, LessonRepository},
     terminal::{CommandResult, ParsedCommand, TerminalSession},
 };
@@ -100,13 +100,19 @@ where
             return Ok(None);
         }
 
+        println!("Current: {}", current.id);
+
         let Some(next) = self.lessons.next(&current) else {
             self.repository.clear_current_lesson(user_id).await?;
 
             return Ok(None);
         };
 
+        println!("Next: {}", next.id);
+
         self.start(user_id, &next.id).await?;
+
+        println!("Started {}", next.id);
 
         Ok(Some(next.clone()))
     }
@@ -153,5 +159,12 @@ where
             current,
             next,
         }))
+    }
+
+    pub async fn progress(&self, user_id: String) -> Result<CourseProgress> {
+        Ok(CourseProgress {
+            completed: self.repository.completed_lessons(user_id).await?,
+            total: self.lessons.len(),
+        })
     }
 }

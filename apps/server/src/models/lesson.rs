@@ -25,3 +25,9 @@ pub struct LessonAttempt {
     pub successful: bool,
     pub created_at: String,
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CourseProgress {
+    pub completed: usize,
+    pub total: usize,
+}

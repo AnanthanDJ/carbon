@@ -4,7 +4,10 @@ use axum::{
     http::{HeaderMap, StatusCode},
 };
 
-use crate::{app::AppState, lesson::Lesson, routes::auth_helper::authenticated_user_id};
+use crate::{
+    app::AppState, lesson::Lesson, models::CourseProgress,
+    routes::auth_helper::authenticated_user_id,
+};
 
 pub async fn list(State(state): State<AppState>) -> Json<Vec<crate::lesson::Lesson>> {
     Json(state.lesson.list().into_iter().cloned().collect())
@@ -37,4 +40,19 @@ pub async fn current(
         .ok_or(StatusCode::NOT_FOUND)?;
 
     Ok(Json(lesson))
+}
+
+pub async fn progress(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<CourseProgress>, StatusCode> {
+    let user_id = authenticated_user_id(&state, &headers).await?;
+
+    let progress = state
+        .lesson_runtime
+        .progress(user_id)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(Json(progress))
 }

@@ -27,8 +27,9 @@ pub fn build(state: AppState) -> Router {
         .route("/auth/me", get(routes::auth::me))
         .route("/terminal", axum::routing::post(routes::terminal::execute))
         .route("/lessons", get(routes::lesson::list))
-        .route("/lessons/{id}", get(routes::lesson::get))
         .route("/lessons/current", get(routes::lesson::current))
+        .route("/lessons/progress", get(routes::lesson::progress))
+        .route("/lessons/{id}", get(routes::lesson::get))
         .route("/health", get(routes::health::health))
         .with_state(state)
 }
