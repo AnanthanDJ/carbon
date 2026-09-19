@@ -91,28 +91,18 @@ where
         Ok(())
     }
 
-    pub async fn advance(&self, user_id: String) -> Result<Option<Lesson>> {
-        let Some(current) = self.current(user_id.clone()).await? else {
-            return Ok(None);
-        };
-        // Course completed.
+    pub async fn advance(&self, user_id: String, current: &Lesson) -> Result<Option<Lesson>> {
         if current.next.as_deref() == Some("end") {
             return Ok(None);
         }
 
-        println!("Current: {}", current.id);
-
-        let Some(next) = self.lessons.next(&current) else {
+        let Some(next) = self.lessons.next(current) else {
             self.repository.clear_current_lesson(user_id).await?;
 
             return Ok(None);
         };
 
-        println!("Next: {}", next.id);
-
         self.start(user_id, &next.id).await?;
-
-        println!("Started {}", next.id);
 
         Ok(Some(next.clone()))
     }
@@ -152,7 +142,7 @@ where
 
         self.complete(user_id.clone(), &current.id).await?;
 
-        let next = self.advance(user_id.clone()).await?;
+        let next = self.advance(user_id.clone(), &current).await?;
 
         Ok(Some(LessonOutcome {
             completed: true,

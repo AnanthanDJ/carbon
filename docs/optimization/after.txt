@@ -1,0 +1,49 @@
+❯ oha -n 1000 -c 100 \
+  -m POST \
+  -H "Authorization: Bearer fa352568-532d-4f85-9e09-0f3ce8d8321f" \
+  -H "Content-Type: application/json" \
+  -d '{"command":"pwd","cwd":"/home"}' \
+  http://localhost:3000/terminal
+Summary:
+  Success rate:	100.00%
+  Total:	1915.8605 ms
+  Slowest:	891.2021 ms
+  Fastest:	10.9169 ms
+  Average:	174.6470 ms
+  Requests/sec:	521.9587
+
+  Total data:	1.54 MiB
+  Size/request:	1.58 KiB
+  Size/sec:	823.72 KiB
+
+Response time histogram:
+   10.917 ms [1]   |
+   98.945 ms [64]  |■■
+  186.974 ms [726] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  275.002 ms [165] |■■■■■■■
+  363.031 ms [28]  |■
+  451.060 ms [9]   |
+  539.088 ms [2]   |
+  627.117 ms [2]   |
+  715.145 ms [1]   |
+  803.174 ms [1]   |
+  891.202 ms [1]   |
+
+Response time distribution:
+  10.00% in 138.6417 ms
+  25.00% in 159.6190 ms
+  50.00% in 165.6820 ms
+  75.00% in 179.2917 ms
+  90.00% in 217.4848 ms
+  95.00% in 270.4514 ms
+  99.00% in 391.1715 ms
+  99.90% in 891.2021 ms
+  99.99% in 891.2021 ms
+
+
+Details (average, fastest, slowest):
+  DNS+dialup:	6.6419 ms, 0.1508 ms, 11.1321 ms
+  DNS-lookup:	0.0080 ms, 0.0037 ms, 0.0592 ms
+
+Status code distribution:
+  [200] 1000 responses
